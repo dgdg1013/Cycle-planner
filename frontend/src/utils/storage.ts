@@ -349,3 +349,13 @@ export async function startDesktopWindowDragging(): Promise<void> {
   if (!isTauriDesktop()) return;
   await invokeDesktop<void>('window_start_dragging');
 }
+
+export async function getDesktopAlwaysOnTopState(): Promise<boolean> {
+  if (!isTauriDesktop()) return false;
+  return invokeDesktop<boolean>('window_is_always_on_top');
+}
+
+export async function toggleDesktopAlwaysOnTop(): Promise<boolean> {
+  if (!isTauriDesktop()) return false;
+  return invokeDesktop<boolean>('window_toggle_always_on_top');
+}

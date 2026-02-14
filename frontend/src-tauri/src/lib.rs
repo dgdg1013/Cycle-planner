@@ -327,6 +327,27 @@ fn window_start_dragging(app: tauri::AppHandle) -> Result<(), String> {
         .map_err(|e| format!("Failed to start dragging window: {e}"))
 }
 
+#[tauri::command]
+fn window_is_always_on_top(app: tauri::AppHandle) -> Result<bool, String> {
+    let window = main_window(&app)?;
+    window
+        .is_always_on_top()
+        .map_err(|e| format!("Failed to get always-on-top state: {e}"))
+}
+
+#[tauri::command]
+fn window_toggle_always_on_top(app: tauri::AppHandle) -> Result<bool, String> {
+    let window = main_window(&app)?;
+    let current = window
+        .is_always_on_top()
+        .map_err(|e| format!("Failed to get always-on-top state: {e}"))?;
+    let next = !current;
+    window
+        .set_always_on_top(next)
+        .map_err(|e| format!("Failed to set always-on-top state: {e}"))?;
+    Ok(next)
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
@@ -341,7 +362,9 @@ pub fn run() {
             window_minimize,
             window_toggle_maximize,
             window_close,
-            window_start_dragging
+            window_start_dragging,
+            window_is_always_on_top,
+            window_toggle_always_on_top
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

@@ -158,6 +158,17 @@ h4 {
   font-size: 10px;
 }
 
+.window-control-btn.pin {
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.window-control-btn.pin.active {
+  background: color-mix(in oklab, var(--accent-bg) 70%, white);
+  color: color-mix(in oklab, var(--accent) 78%, var(--text-primary));
+  border-color: color-mix(in oklab, var(--accent) 24%, var(--border-default));
+}
+
 .window-control-btn:hover {
   background: var(--bg-hover);
   color: var(--text-primary);

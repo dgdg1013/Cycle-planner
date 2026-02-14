@@ -9,6 +9,7 @@ import { uid } from './utils/model';
 import {
   closeDesktopWindow,
   createCycle,
+  getDesktopAlwaysOnTopState,
   importCycle,
   isDesktopRuntime,
   loadCycleData,
@@ -18,6 +19,7 @@ import {
   saveCycleData,
   selectCycle,
   startDesktopWindowDragging,
+  toggleDesktopAlwaysOnTop,
   toggleMaximizeDesktopWindow
 } from './utils/storage';
 
@@ -58,6 +60,7 @@ export default function App() {
   const [hideCompletedTodoTab, setHideCompletedTodoTab] = useState(false);
   const [cycleParentDir, setCycleParentDir] = useState('');
   const [loading, setLoading] = useState(true);
+  const [alwaysOnTop, setAlwaysOnTop] = useState(false);
   const isDesktop = isDesktopRuntime();
 
   const selectedCycleId = index.selectedCycleId;
@@ -66,6 +69,19 @@ export default function App() {
     document.documentElement.dataset.theme = theme;
     window.localStorage.setItem('theme', theme);
   }, [theme]);
+
+  useEffect(() => {
+    if (!isDesktop) return;
+    const syncAlwaysOnTop = async () => {
+      try {
+        const state = await getDesktopAlwaysOnTopState();
+        setAlwaysOnTop(state);
+      } catch {
+        setAlwaysOnTop(false);
+      }
+    };
+    void syncAlwaysOnTop();
+  }, [isDesktop]);
 
   useEffect(() => {
     const bootstrap = async () => {
@@ -240,6 +256,15 @@ export default function App() {
         <div className="window-chrome">
           <div className="window-drag-region" onMouseDown={() => void startDesktopWindowDragging()} />
           <div className="window-controls">
+            <button
+              type="button"
+              className={`window-control-btn pin ${alwaysOnTop ? 'active' : ''}`}
+              onClick={() => void toggleDesktopAlwaysOnTop().then(setAlwaysOnTop)}
+              aria-label="Always on top"
+              title={alwaysOnTop ? 'Disable always on top' : 'Enable always on top'}
+            >
+              P
+            </button>
             <button type="button" className="window-control-btn" onClick={() => void minimizeDesktopWindow()} aria-label="Minimize">_</button>
             <button type="button" className="window-control-btn maximize" onClick={() => void toggleMaximizeDesktopWindow()} aria-label="Maximize or Restore">□</button>
             <button type="button" className="window-control-btn close" onClick={() => void closeDesktopWindow()} aria-label="Close">x</button>
