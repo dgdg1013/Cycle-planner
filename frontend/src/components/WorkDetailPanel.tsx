@@ -43,14 +43,14 @@ export function WorkDetailPanel({
   };
 
   const insertImage = () => {
-    const src = window.prompt('이미지 URL을 입력하세요');
+    const src = window.prompt('Enter image URL');
     if (!src) return;
     exec('insertImage', src);
   };
 
   const insertTable = () => {
-    const rowInput = window.prompt('행 개수', '2');
-    const colInput = window.prompt('열 개수', '2');
+    const rowInput = window.prompt('Rows', '2');
+    const colInput = window.prompt('Columns', '2');
     const rows = Number(rowInput);
     const cols = Number(colInput);
     if (!Number.isInteger(rows) || !Number.isInteger(cols) || rows <= 0 || cols <= 0) return;
@@ -79,13 +79,13 @@ export function WorkDetailPanel({
   return (
     <aside className="work-detail-panel">
       <div className="work-detail-header">
-        <h3>Work 상세</h3>
-        <button type="button" className="btn-text" onClick={onClose}>닫기</button>
+        <h3>Work Details</h3>
+        <button type="button" className="btn-text" onClick={onClose}>Close</button>
       </div>
 
       <div className="work-detail-meta">
         <div className="work-detail-field">
-          <span>Work 제목</span>
+          <span>Work title</span>
           <input
             type="text"
             value={work.title}
@@ -94,7 +94,7 @@ export function WorkDetailPanel({
         </div>
 
         <div className="work-detail-field">
-          <span>상태</span>
+          <span>Status</span>
           <select
             value={work.status}
             onChange={(e) => {
@@ -102,14 +102,14 @@ export function WorkDetailPanel({
               onChangeWorkStatus(work.id, status);
             }}
           >
-            <option value="NOT_STARTED">시작 전</option>
-            <option value="IN_PROGRESS">진행 중</option>
-            <option value="DONE">완료</option>
+            <option value="NOT_STARTED">Not started</option>
+            <option value="IN_PROGRESS">In progress</option>
+            <option value="DONE">Done</option>
           </select>
         </div>
 
         <div className="work-detail-field">
-          <span>목표 시작일</span>
+          <span>Start date</span>
           <input
             type="date"
             value={work.startDate || ''}
@@ -118,7 +118,7 @@ export function WorkDetailPanel({
         </div>
 
         <div className="work-detail-field">
-          <span>목표 완료일</span>
+          <span>End date</span>
           <input
             type="date"
             value={work.endDate || ''}
@@ -129,15 +129,15 @@ export function WorkDetailPanel({
 
       <div className="work-detail-body">
         <div className="work-detail-body-header">
-          <h4>본문</h4>
+          <h4>Body</h4>
           {!isEditingBody && (
             <button type="button" className="btn" onClick={() => setIsEditingBody(true)}>
-              {work.body ? '수정' : '생성'}
+              {work.body ? 'Edit' : 'Create'}
             </button>
           )}
         </div>
 
-        {!isEditingBody && !work.body && <p className="empty-state">본문이 없습니다.</p>}
+        {!isEditingBody && !work.body && <p className="empty-state">No body content.</p>}
 
         {!isEditingBody && work.body && (
           <div className="rich-output" dangerouslySetInnerHTML={{ __html: work.body }} />
@@ -161,28 +161,28 @@ export function WorkDetailPanel({
               suppressContentEditableWarning
             />
             <div className="work-form-actions">
-              <button type="button" className="work-form-btn-cancel" onClick={() => setIsEditingBody(false)}>취소</button>
-              <button type="button" className="work-form-btn-submit" onClick={saveBody}>저장</button>
+              <button type="button" className="work-form-btn-cancel" onClick={() => setIsEditingBody(false)}>Cancel</button>
+              <button type="button" className="work-form-btn-submit" onClick={saveBody}>Save</button>
             </div>
           </div>
         )}
       </div>
 
       <div className="work-detail-task">
-        <h4>하위 Task</h4>
+        <h4>Child Tasks</h4>
         <form className="detail-task-form" onSubmit={createTaskInDetail}>
           <input
             type="text"
-            placeholder="Task 제목"
+            placeholder="Task title"
             value={taskTitle}
             onChange={(e) => setTaskTitle(e.target.value)}
           />
           <input type="date" value={taskDueDate} onChange={(e) => setTaskDueDate(e.target.value)} />
-          <button type="submit" className="btn">추가</button>
+          <button type="submit" className="btn">Add</button>
         </form>
 
         <div className="detail-task-list">
-          {tasks.length === 0 && <p className="empty-state">Task가 없습니다.</p>}
+          {tasks.length === 0 && <p className="empty-state">No tasks.</p>}
           {tasks.map((task) => (
             <label key={task.id} className={`task-item ${task.done ? 'done' : ''}`}>
               <input type="checkbox" checked={task.done} onChange={() => onToggleTask(task.id)} />
@@ -191,8 +191,8 @@ export function WorkDetailPanel({
               <button
                 type="button"
                 className="btn-delete-card"
-                title="Task 삭제"
-                aria-label="Task 삭제"
+                title="Delete Task"
+                aria-label="Delete Task"
                 onClick={(e) => {
                   e.preventDefault();
                   e.stopPropagation();

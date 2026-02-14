@@ -28,7 +28,7 @@ function isTauriDesktop(): boolean {
 async function invokeDesktop<T>(cmd: string, args?: Record<string, unknown>): Promise<T> {
   const invoke = getTauriInvoke();
   if (!invoke) {
-    throw new Error('데스크탑 런타임을 찾을 수 없습니다.');
+    throw new Error('Desktop runtime is not available.');
   }
   return invoke<T>(cmd, args);
 }
@@ -118,7 +118,7 @@ export async function pickFolder(): Promise<string | null> {
   }
 
   if (!supportsFsApi()) {
-    throw new Error('이 브라우저는 폴더 선택 API를 지원하지 않습니다. Chrome/Edge 최신 버전을 사용하세요.');
+    throw new Error('This browser does not support the folder picker API. Use a recent Chrome or Edge version.');
   }
 
   const handle = await window.showDirectoryPicker();
@@ -171,12 +171,12 @@ export async function createCycle(name: string, _parentDir: string): Promise<App
   }
 
   if (!selectedParentHandle) {
-    throw new Error('먼저 저장 폴더를 선택하세요.');
+    throw new Error('Please choose a storage folder first.');
   }
 
   const hasPermission = await ensureReadWritePermission(selectedParentHandle);
   if (!hasPermission) {
-    throw new Error('선택한 폴더에 대한 읽기/쓰기 권한이 필요합니다.');
+    throw new Error('Read/write permission is required for the selected folder.');
   }
 
   const index = await loadIndex();
@@ -215,13 +215,13 @@ export async function importCycle(_folderPath: string): Promise<AppIndex> {
   }
 
   if (!supportsFsApi()) {
-    throw new Error('이 브라우저는 폴더 선택 API를 지원하지 않습니다.');
+    throw new Error('This browser does not support the folder picker API.');
   }
 
   const folder = await window.showDirectoryPicker();
   const hasPermission = await ensureReadWritePermission(folder);
   if (!hasPermission) {
-    throw new Error('폴더 읽기/쓰기 권한이 필요합니다.');
+    throw new Error('Read/write permission is required for this folder.');
   }
 
   const data = await readCycleFile(folder);

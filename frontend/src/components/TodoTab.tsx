@@ -39,7 +39,7 @@ export function TodoTab({ works, tasks, hideCompleted, onHideCompletedChange, on
 
   if (orphanTasks.length > 0) {
     groups.push({
-      work: { id: 'orphan', title: '미분류 Work', cycleId: '', status: 'NOT_STARTED' },
+      work: { id: 'orphan', title: 'Unassigned Work', cycleId: '', status: 'NOT_STARTED' },
       tasks: orphanTasks
     });
   }
@@ -47,14 +47,14 @@ export function TodoTab({ works, tasks, hideCompleted, onHideCompletedChange, on
   return (
     <section className="tab-panel todo-tab">
       <div className="panel-controls todo-controls">
-        <p className="todo-overview">다음 30일 내 일정: <strong>{sortedTasks.length}개</strong></p>
+        <p className="todo-overview">Tasks due in the next 30 days: <strong>{sortedTasks.length}</strong></p>
         <label className="todo-filter">
           <input
             type="checkbox"
             checked={hideCompleted}
             onChange={(event) => onHideCompletedChange(event.target.checked)}
           />
-          완료된 항목 가리기
+          Hide completed tasks
         </label>
       </div>
 
@@ -80,7 +80,7 @@ export function TodoTab({ works, tasks, hideCompleted, onHideCompletedChange, on
         </div>
       )}
 
-      {sortedTasks.length === 0 && <p className="todo-empty">한 달 이내에 완료해야 하는 Task가 없습니다.</p>}
+      {sortedTasks.length === 0 && <p className="todo-empty">No tasks are due within the next 30 days.</p>}
     </section>
   );
 }

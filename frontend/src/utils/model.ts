@@ -1,15 +1,15 @@
 import { GoalStatus, Work, WorkStatus } from '../types/models';
 
 export const WORK_STATUS_LABEL: Record<WorkStatus, string> = {
-  NOT_STARTED: '시작 전',
-  IN_PROGRESS: '진행 중',
-  DONE: '완료'
+  NOT_STARTED: 'Not started',
+  IN_PROGRESS: 'In progress',
+  DONE: 'Done'
 };
 
 export const GOAL_STATUS_LABEL: Record<GoalStatus, string> = {
-  NOT_STARTED: '시작 전',
-  IN_PROGRESS: '진행 중',
-  DONE: '완료'
+  NOT_STARTED: 'Not started',
+  IN_PROGRESS: 'In progress',
+  DONE: 'Done'
 };
 
 export function computeGoalStatus(goalWorkList: Work[]): GoalStatus {

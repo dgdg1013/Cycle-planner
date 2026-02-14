@@ -84,7 +84,7 @@ export default function App() {
           }
         }
       } catch (error) {
-        const message = error instanceof Error ? error.message : '초기 로딩 중 오류가 발생했습니다.';
+        const message = error instanceof Error ? error.message : 'An error occurred during initial loading.';
         window.alert(message);
       } finally {
         setLoading(false);
@@ -109,7 +109,7 @@ export default function App() {
       const data = await loadCycleData(activeId);
       setCycleData(normalizeCycleData(activeId, data));
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Cycle 생성에 실패했습니다.';
+      const message = error instanceof Error ? error.message : 'Failed to create Cycle.';
       window.alert(message);
     }
   };
@@ -137,7 +137,7 @@ export default function App() {
       split.pop();
       setCycleParentDir(split.join('/'));
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Cycle 불러오기에 실패했습니다.';
+      const message = error instanceof Error ? error.message : 'Failed to import Cycle.';
       window.alert(message);
     }
   };
@@ -149,7 +149,7 @@ export default function App() {
       const data = await loadCycleData(cycleId);
       setCycleData(normalizeCycleData(cycleId, data));
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Cycle 변경에 실패했습니다.';
+      const message = error instanceof Error ? error.message : 'Failed to switch Cycle.';
       window.alert(message);
     }
   };
@@ -240,9 +240,9 @@ export default function App() {
         <div className="window-chrome">
           <div className="window-drag-region" onMouseDown={() => void startDesktopWindowDragging()} />
           <div className="window-controls">
-            <button type="button" className="window-control-btn" onClick={() => void minimizeDesktopWindow()} aria-label="최소화">_</button>
-            <button type="button" className="window-control-btn maximize" onClick={() => void toggleMaximizeDesktopWindow()} aria-label="최대화/복원">□</button>
-            <button type="button" className="window-control-btn close" onClick={() => void closeDesktopWindow()} aria-label="닫기">x</button>
+            <button type="button" className="window-control-btn" onClick={() => void minimizeDesktopWindow()} aria-label="Minimize">_</button>
+            <button type="button" className="window-control-btn maximize" onClick={() => void toggleMaximizeDesktopWindow()} aria-label="Maximize or Restore">□</button>
+            <button type="button" className="window-control-btn close" onClick={() => void closeDesktopWindow()} aria-label="Close">x</button>
           </div>
         </div>
       )}
@@ -254,8 +254,8 @@ export default function App() {
             type="button"
             className="theme-toggle"
             onClick={() => setTheme((prev) => (prev === 'light' ? 'dark' : 'light'))}
-            aria-label="테마 전환"
-            title="라이트/다크 모드 전환"
+            aria-label="Toggle theme"
+            title="Toggle light/dark mode"
           >
             {theme === 'light' ? 'Dark' : 'Light'}
           </button>
@@ -272,8 +272,8 @@ export default function App() {
       </header>
 
       <main className="content">
-        {loading && <p className="loading-state">데이터 로딩 중...</p>}
-        {!loading && !hasCycle && <p className="empty-state">위에서 Cycle을 생성하거나 불러오세요.</p>}
+        {loading && <p className="loading-state">Loading data...</p>}
+        {!loading && !hasCycle && <p className="empty-state">Create or import a Cycle above.</p>}
 
         {hasCycle && tab === 'goals' && (
           <GoalListTab

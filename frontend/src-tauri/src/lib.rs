@@ -141,7 +141,7 @@ fn find_cycle(index: &IndexData, cycle_id: &str) -> Option<CycleMeta> {
 
 fn main_window(app: &tauri::AppHandle) -> Result<tauri::WebviewWindow, String> {
     app.get_webview_window("main")
-        .ok_or_else(|| "메인 창을 찾을 수 없습니다.".to_string())
+        .ok_or_else(|| "Main window was not found.".to_string())
 }
 
 #[tauri::command]
@@ -159,7 +159,7 @@ fn load_index(app: tauri::AppHandle) -> Result<IndexData, String> {
 fn select_cycle(app: tauri::AppHandle, cycleId: String) -> Result<IndexData, String> {
     let mut index = read_index(&app)?;
     if find_cycle(&index, &cycleId).is_none() {
-        return Err("선택한 Cycle이 존재하지 않습니다.".to_string());
+        return Err("Selected Cycle does not exist.".to_string());
     }
     index.selected_cycle_id = Some(cycleId);
     write_index(&app, &index)?;
@@ -171,7 +171,7 @@ fn select_cycle(app: tauri::AppHandle, cycleId: String) -> Result<IndexData, Str
 fn create_cycle(app: tauri::AppHandle, name: String, parentDir: String) -> Result<IndexData, String> {
     let parent = Path::new(&parentDir);
     if !parent.exists() || !parent.is_dir() {
-        return Err("유효한 상위 폴더가 아닙니다.".to_string());
+        return Err("The selected parent folder is not valid.".to_string());
     }
 
     let mut index = read_index(&app)?;
@@ -179,7 +179,7 @@ fn create_cycle(app: tauri::AppHandle, name: String, parentDir: String) -> Resul
     let suffix = cycle_id.chars().rev().take(6).collect::<String>().chars().rev().collect::<String>();
     let folder_name = format!("{}_{}", sanitize_folder_name(&name), suffix);
     let folder_path = parent.join(folder_name);
-    fs::create_dir_all(&folder_path).map_err(|e| format!("cycle 폴더 생성 실패: {e}"))?;
+    fs::create_dir_all(&folder_path).map_err(|e| format!("Failed to create cycle folder: {e}"))?;
 
     let meta = CycleMeta {
         id: cycle_id.clone(),
@@ -211,7 +211,7 @@ fn create_cycle(app: tauri::AppHandle, name: String, parentDir: String) -> Resul
 fn import_cycle(app: tauri::AppHandle, folderPath: String) -> Result<IndexData, String> {
     let file = cycle_file_path(&folderPath);
     if !file.exists() {
-        return Err("cycle_data.json 파일이 없습니다.".to_string());
+        return Err("cycle_data.json was not found.".to_string());
     }
 
     let raw = fs::read_to_string(&file).map_err(|e| format!("read import cycle data error: {e}"))?;
@@ -243,7 +243,7 @@ fn import_cycle(app: tauri::AppHandle, folderPath: String) -> Result<IndexData, 
 
     index.selected_cycle_id = Some(data.id.clone());
 
-    let selected = find_cycle(&index, &data.id).ok_or_else(|| "cycle 등록 오류".to_string())?;
+    let selected = find_cycle(&index, &data.id).ok_or_else(|| "Failed to register cycle.".to_string())?;
     write_cycle_data(&selected, &data)?;
     write_index(&app, &index)?;
     Ok(index)
@@ -253,7 +253,7 @@ fn import_cycle(app: tauri::AppHandle, folderPath: String) -> Result<IndexData, 
 #[allow(non_snake_case)]
 fn load_cycle_data(app: tauri::AppHandle, cycleId: String) -> Result<CycleData, String> {
     let index = read_index(&app)?;
-    let cycle = find_cycle(&index, &cycleId).ok_or_else(|| "Cycle을 찾을 수 없습니다.".to_string())?;
+    let cycle = find_cycle(&index, &cycleId).ok_or_else(|| "Cycle was not found.".to_string())?;
     ensure_cycle_data(&cycle)
 }
 
@@ -261,7 +261,7 @@ fn load_cycle_data(app: tauri::AppHandle, cycleId: String) -> Result<CycleData, 
 #[allow(non_snake_case)]
 fn save_cycle_data(app: tauri::AppHandle, cycleId: String, data: CycleData) -> Result<(), String> {
     let index = read_index(&app)?;
-    let cycle = find_cycle(&index, &cycleId).ok_or_else(|| "Cycle을 찾을 수 없습니다.".to_string())?;
+    let cycle = find_cycle(&index, &cycleId).ok_or_else(|| "Cycle was not found.".to_string())?;
     let mut next = data;
     next.id = cycle.id.clone();
     next.name = cycle.name.clone();
@@ -274,7 +274,7 @@ fn save_cycle_data(app: tauri::AppHandle, cycleId: String, data: CycleData) -> R
 #[tauri::command]
 fn window_minimize(app: tauri::AppHandle) -> Result<(), String> {
     let window = main_window(&app)?;
-    window.minimize().map_err(|e| format!("창 최소화 실패: {e}"))
+    window.minimize().map_err(|e| format!("Failed to minimize window: {e}"))
 }
 
 #[tauri::command]
@@ -282,18 +282,18 @@ fn window_toggle_maximize(app: tauri::AppHandle) -> Result<(), String> {
     let window = main_window(&app)?;
     let is_maximized = window
         .is_maximized()
-        .map_err(|e| format!("창 상태 조회 실패: {e}"))?;
+        .map_err(|e| format!("Failed to read window state: {e}"))?;
     if is_maximized {
-        window.unmaximize().map_err(|e| format!("창 복원 실패: {e}"))
+        window.unmaximize().map_err(|e| format!("Failed to restore window: {e}"))
     } else {
-        window.maximize().map_err(|e| format!("창 최대화 실패: {e}"))
+        window.maximize().map_err(|e| format!("Failed to maximize window: {e}"))
     }
 }
 
 #[tauri::command]
 fn window_close(app: tauri::AppHandle) -> Result<(), String> {
     let window = main_window(&app)?;
-    window.close().map_err(|e| format!("창 닫기 실패: {e}"))
+    window.close().map_err(|e| format!("Failed to close window: {e}"))
 }
 
 #[tauri::command]
@@ -301,7 +301,7 @@ fn window_start_dragging(app: tauri::AppHandle) -> Result<(), String> {
     let window = main_window(&app)?;
     window
         .start_dragging()
-        .map_err(|e| format!("창 드래그 시작 실패: {e}"))
+        .map_err(|e| format!("Failed to start dragging window: {e}"))
 }
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]

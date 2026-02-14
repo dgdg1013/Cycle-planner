@@ -29,14 +29,14 @@ interface PublicHoliday {
 }
 
 const FALLBACK_SOLAR_HOLIDAYS: Array<{ monthDay: string; name: string }> = [
-  { monthDay: '01-01', name: '신정' },
-  { monthDay: '03-01', name: '삼일절' },
-  { monthDay: '05-05', name: '어린이날' },
-  { monthDay: '06-06', name: '현충일' },
-  { monthDay: '08-15', name: '광복절' },
-  { monthDay: '10-03', name: '개천절' },
-  { monthDay: '10-09', name: '한글날' },
-  { monthDay: '12-25', name: '성탄절' }
+  { monthDay: '01-01', name: "New Year's Day" },
+  { monthDay: '03-01', name: 'Independence Movement Day' },
+  { monthDay: '05-05', name: "Children's Day" },
+  { monthDay: '06-06', name: 'Memorial Day' },
+  { monthDay: '08-15', name: 'Liberation Day' },
+  { monthDay: '10-03', name: 'National Foundation Day' },
+  { monthDay: '10-09', name: 'Hangeul Day' },
+  { monthDay: '12-25', name: 'Christmas Day' }
 ];
 
 function formatDateKey(date: Date): string {
@@ -111,8 +111,8 @@ export function CalendarTab({
   goals.forEach((goal) => {
     const status = computeGoalStatus(works.filter((work) => work.goalId === goal.id));
     [
-      { date: goal.startDate, suffix: '시작일' },
-      { date: goal.endDate, suffix: '완료일' }
+      { date: goal.startDate, suffix: 'Start' },
+      { date: goal.endDate, suffix: 'End' }
     ].forEach(({ date, suffix }) => {
       const key = toDateKey(date);
       if (!key) return;
@@ -123,8 +123,8 @@ export function CalendarTab({
 
   works.forEach((work) => {
     [
-      { date: work.startDate, suffix: '시작일' },
-      { date: work.endDate, suffix: '완료일' }
+      { date: work.startDate, suffix: 'Start' },
+      { date: work.endDate, suffix: 'End' }
     ].forEach(({ date, suffix }) => {
       const key = toDateKey(date);
       if (!key) return;
@@ -144,7 +144,7 @@ export function CalendarTab({
     const key = toDateKey(task.dueDate);
     if (!key) return;
     itemsByDay[key] = itemsByDay[key] ?? [];
-    itemsByDay[key].push({ id: task.id, date: key, label: `[Task] ${task.title} 완료일`, completed: task.done, kind: 'task' });
+    itemsByDay[key].push({ id: task.id, date: key, label: `[Task] ${task.title} Due`, completed: task.done, kind: 'task' });
   });
 
   const dayCells: Array<number | null> = [];
@@ -162,10 +162,10 @@ export function CalendarTab({
       {deleteTaskTarget && (
         <div className="modal-backdrop" onClick={() => setDeleteTaskTarget(null)} role="presentation">
           <div className="modal-box" onClick={(e) => e.stopPropagation()} role="dialog" aria-modal="true">
-            <h3>삭제 확인</h3>
-            <p>{`"${deleteTaskTarget.title}" Task를 삭제할까요?`}</p>
+            <h3>Delete Confirmation</h3>
+            <p>{`Do you want to delete "${deleteTaskTarget.title}"?`}</p>
             <div className="modal-actions">
-              <button type="button" className="btn-cancel" onClick={() => setDeleteTaskTarget(null)}>취소</button>
+              <button type="button" className="btn-cancel" onClick={() => setDeleteTaskTarget(null)}>Cancel</button>
               <button
                 type="button"
                 className="btn-submit"
@@ -174,7 +174,7 @@ export function CalendarTab({
                   setDeleteTaskTarget(null);
                 }}
               >
-                확인
+                Confirm
               </button>
             </div>
           </div>
@@ -184,15 +184,15 @@ export function CalendarTab({
       <div className={`goal-detail-layout ${selectedWork ? 'detail-open' : ''}`}>
         <div className="goal-detail-main calendar-detail-main">
           <div className="calendar-header">
-            <h2>{year}년 {month + 1}월</h2>
+            <h2>{year}-{`${month + 1}`.padStart(2, '0')}</h2>
             <div className="calendar-nav">
-              <button type="button" onClick={() => setViewDate(new Date(year, month - 1, 1))} title="이전 달">◀</button>
-              <button type="button" onClick={() => setViewDate(new Date(new Date().getFullYear(), new Date().getMonth(), 1))} title="오늘">today</button>
-              <button type="button" onClick={() => setViewDate(new Date(year, month + 1, 1))} title="다음 달">▶</button>
+              <button type="button" onClick={() => setViewDate(new Date(year, month - 1, 1))} title="Previous month">◀</button>
+              <button type="button" onClick={() => setViewDate(new Date(new Date().getFullYear(), new Date().getMonth(), 1))} title="This month">Today</button>
+              <button type="button" onClick={() => setViewDate(new Date(year, month + 1, 1))} title="Next month">▶</button>
             </div>
           </div>
           <div className="calendar-grid">
-            {['일', '월', '화', '수', '목', '금', '토'].map((name, idx) => (
+            {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((name, idx) => (
               <div key={name} className={`week-header ${idx === 0 || idx === 6 ? 'weekend' : ''}`}>{name}</div>
             ))}
             {dayCells.map((date, idx) => {

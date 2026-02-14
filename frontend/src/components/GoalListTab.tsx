@@ -50,8 +50,8 @@ function TaskDisplay({
       <button
         type="button"
         className="btn-delete-card"
-        title="Task 삭제"
-        aria-label="Task 삭제"
+        title="Delete Task"
+        aria-label="Delete Task"
         onClick={(e) => {
           e.preventDefault();
           e.stopPropagation();
@@ -113,14 +113,14 @@ export function GoalListTab(props: GoalListTabProps) {
   };
 
   const insertNewWorkImage = () => {
-    const src = window.prompt('이미지 URL을 입력하세요');
+    const src = window.prompt('Enter image URL');
     if (!src) return;
     execNewWorkEditor('insertImage', src);
   };
 
   const insertNewWorkTable = () => {
-    const rowInput = window.prompt('행 개수', '2');
-    const colInput = window.prompt('열 개수', '2');
+    const rowInput = window.prompt('Rows', '2');
+    const colInput = window.prompt('Columns', '2');
     const rows = Number(rowInput);
     const cols = Number(colInput);
     if (!Number.isInteger(rows) || !Number.isInteger(cols) || rows <= 0 || cols <= 0) return;
@@ -249,14 +249,14 @@ export function GoalListTab(props: GoalListTabProps) {
             onClick={(e) => e.stopPropagation()}
             onChange={(e) => onChangeWorkStatus(work.id, e.target.value as WorkStatus)}
           >
-            <option value="NOT_STARTED">시작 전</option>
-            <option value="IN_PROGRESS">진행 중</option>
-            <option value="DONE">완료</option>
+            <option value="NOT_STARTED">Not started</option>
+            <option value="IN_PROGRESS">In progress</option>
+            <option value="DONE">Done</option>
           </select>
         </div>
-        <p>상태: {WORK_STATUS_LABEL[work.status]}</p>
-        <p>목표 시작일: {work.startDate || '-'}</p>
-        <p>목표 완료일: {work.endDate || '-'}</p>
+        <p>Status: {WORK_STATUS_LABEL[work.status]}</p>
+        <p>Start date: {work.startDate || '-'}</p>
+        <p>End date: {work.endDate || '-'}</p>
         <div className="task-row">
           <button
             type="button"
@@ -271,7 +271,7 @@ export function GoalListTab(props: GoalListTabProps) {
           <button
             type="button"
             className="btn-add-task"
-            title="Task 추가"
+            title="Task Add"
             onClick={(e) => {
               e.stopPropagation();
               openTaskModal(work.id);
@@ -315,7 +315,7 @@ export function GoalListTab(props: GoalListTabProps) {
       <div className="panel-controls">
         <div className="panel-controls-left">
           <button type="button" className="btn btn-primary" onClick={() => setGoalModalOpen(true)}>
-            Goal 생성
+            Create Goal
           </button>
         </div>
         <div className="panel-controls-right">
@@ -325,7 +325,7 @@ export function GoalListTab(props: GoalListTabProps) {
               checked={hideCompleted}
               onChange={(e) => onHideCompletedChange(e.target.checked)}
             />
-            완료된 항목들 가리기
+            Hide completed items
           </label>
         </div>
       </div>
@@ -333,10 +333,10 @@ export function GoalListTab(props: GoalListTabProps) {
       {goalModalOpen && (
         <div className="modal-backdrop" onClick={() => setGoalModalOpen(false)} role="presentation">
           <div className="modal-box" onClick={(e) => e.stopPropagation()} role="dialog" aria-modal="true">
-            <h3>Goal 생성</h3>
+            <h3>Create Goal</h3>
             <form onSubmit={saveNewGoal}>
               <label>
-                Goal 제목
+                Goal title
                 <input
                   type="text"
                   value={newGoalForm.title}
@@ -345,16 +345,16 @@ export function GoalListTab(props: GoalListTabProps) {
                 />
               </label>
               <label>
-                목표 시작일 (선택)
+                Start date (optional)
                 <input type="date" value={newGoalForm.startDate} onChange={(e) => setNewGoalForm((p) => ({ ...p, startDate: e.target.value }))} />
               </label>
               <label>
-                목표 완료일 (선택)
+                End date (optional)
                 <input type="date" value={newGoalForm.endDate} onChange={(e) => setNewGoalForm((p) => ({ ...p, endDate: e.target.value }))} />
               </label>
               <div className="modal-actions">
-                <button type="button" className="btn-cancel" onClick={() => setGoalModalOpen(false)}>취소</button>
-                <button type="submit" className="btn-submit">추가</button>
+                <button type="button" className="btn-cancel" onClick={() => setGoalModalOpen(false)}>Cancel</button>
+                <button type="submit" className="btn-submit">Add</button>
               </div>
             </form>
           </div>
@@ -367,10 +367,10 @@ export function GoalListTab(props: GoalListTabProps) {
         return (
           <div className="modal-backdrop" onClick={() => setTaskModal(null)} role="presentation">
             <div className="modal-box" onClick={(e) => e.stopPropagation()} role="dialog" aria-modal="true">
-              <h3>{taskModal.mode === 'edit' ? 'Task 수정' : 'Task 추가'} - {work.title}</h3>
+              <h3>{taskModal.mode === 'edit' ? 'Edit Task' : 'Add Task'} - {work.title}</h3>
               <form onSubmit={(e) => saveNewTask(e, work.id)}>
                 <label>
-                  Task 제목
+                  Task title
                   <input
                     type="text"
                     value={newTaskForm.title}
@@ -379,12 +379,12 @@ export function GoalListTab(props: GoalListTabProps) {
                   />
                 </label>
                 <label>
-                  목표 완료일 (선택)
+                  Due date (optional)
                   <input type="date" value={newTaskForm.dueDate} onChange={(e) => setNewTaskForm((p) => ({ ...p, dueDate: e.target.value }))} />
                 </label>
                 <div className="modal-actions">
-                  <button type="button" className="btn-cancel" onClick={() => setTaskModal(null)}>취소</button>
-                  <button type="submit" className="btn-submit">{taskModal.mode === 'edit' ? '저장' : '추가'}</button>
+                  <button type="button" className="btn-cancel" onClick={() => setTaskModal(null)}>Cancel</button>
+                  <button type="submit" className="btn-submit">{taskModal.mode === 'edit' ? 'Save' : 'Add'}</button>
                 </div>
               </form>
             </div>
@@ -395,12 +395,12 @@ export function GoalListTab(props: GoalListTabProps) {
       {deleteTarget && (
         <div className="modal-backdrop" onClick={() => setDeleteTarget(null)} role="presentation">
           <div className="modal-box" onClick={(e) => e.stopPropagation()} role="dialog" aria-modal="true">
-            <h3>삭제 확인</h3>
+            <h3>Delete Confirmation</h3>
             <p>
-              {`"${deleteTarget.title}" Task를 삭제할까요?`}
+              {`Do you want to delete "${deleteTarget.title}"?`}
             </p>
             <div className="modal-actions">
-              <button type="button" className="btn-cancel" onClick={() => setDeleteTarget(null)}>취소</button>
+              <button type="button" className="btn-cancel" onClick={() => setDeleteTarget(null)}>Cancel</button>
               <button
                 type="button"
                 className="btn-submit"
@@ -409,7 +409,7 @@ export function GoalListTab(props: GoalListTabProps) {
                   setDeleteTarget(null);
                 }}
               >
-                확인
+                Confirm
               </button>
             </div>
           </div>
@@ -433,7 +433,7 @@ export function GoalListTab(props: GoalListTabProps) {
                   setContextMenuTarget(null);
                 }}
               >
-                [{contextMenuTarget.title}] Work 생성
+                [{contextMenuTarget.title}] Create Work
               </button>
             )}
             {contextMenuTarget.kind === 'task' && (
@@ -446,7 +446,7 @@ export function GoalListTab(props: GoalListTabProps) {
                   setContextMenuTarget(null);
                 }}
               >
-                [{contextMenuTarget.title}] Task 수정
+                [{contextMenuTarget.title}] Edit Task
               </button>
             )}
             <button
@@ -459,7 +459,7 @@ export function GoalListTab(props: GoalListTabProps) {
                 setContextMenuTarget(null);
               }}
             >
-              [{contextMenuTarget.title}] {contextMenuTarget.kind === 'goal' ? 'Goal' : contextMenuTarget.kind === 'work' ? 'Work' : 'Task'} 삭제
+              Delete {contextMenuTarget.kind === 'goal' ? 'Goal' : contextMenuTarget.kind === 'work' ? 'Work' : 'Task'}: {contextMenuTarget.title}
             </button>
           </div>
         </div>
@@ -492,12 +492,12 @@ export function GoalListTab(props: GoalListTabProps) {
                       <span className={`badge ${status.toLowerCase()}`}>{GOAL_STATUS_LABEL[status]}</span>
                     </header>
                   </div>
-                  <div className="goal-progress" aria-label={`진행률 ${progress}%`}>
+                  <div className="goal-progress" aria-label={`Progress ${progress}%`}>
                     <div className="goal-progress-bar" style={{ width: `${progress}%` }} />
                     <span className={`goal-progress-text ${progress > 0 ? 'on-fill' : 'on-track'}`}>{progress}%</span>
                   </div>
-                  <p>목표 시작일: {goal.startDate || '-'}</p>
-                  <p>목표 완료일: {goal.endDate || '-'}</p>
+                  <p>Start date: {goal.startDate || '-'}</p>
+                  <p>End date: {goal.endDate || '-'}</p>
 
                   <div className="work-list">
                     {isAddingWork && (
@@ -506,7 +506,7 @@ export function GoalListTab(props: GoalListTabProps) {
                           <input
                             type="text"
                             className="work-form-input"
-                            placeholder="Work 제목"
+                            placeholder="Work title"
                             value={newWorkForm.title}
                             onChange={(e) => setNewWorkForm((p) => ({ ...p, title: e.target.value }))}
                             autoFocus
@@ -516,23 +516,23 @@ export function GoalListTab(props: GoalListTabProps) {
                             value={newWorkForm.status}
                             onChange={(e) => setNewWorkForm((p) => ({ ...p, status: e.target.value as WorkStatus }))}
                           >
-                            <option value="NOT_STARTED">시작 전</option>
-                            <option value="IN_PROGRESS">진행 중</option>
-                            <option value="DONE">완료</option>
+                            <option value="NOT_STARTED">Not started</option>
+                            <option value="IN_PROGRESS">In progress</option>
+                            <option value="DONE">Done</option>
                           </select>
                         </div>
                         <div className="work-form-dates">
                           <label className="work-form-field">
-                            <span className="work-form-label">목표 시작일</span>
+                            <span className="work-form-label">Start date</span>
                             <input type="date" className="work-form-input" value={newWorkForm.startDate} onChange={(e) => setNewWorkForm((p) => ({ ...p, startDate: e.target.value }))} />
                           </label>
                           <label className="work-form-field">
-                            <span className="work-form-label">목표 완료일</span>
+                            <span className="work-form-label">End date</span>
                             <input type="date" className="work-form-input" value={newWorkForm.endDate} onChange={(e) => setNewWorkForm((p) => ({ ...p, endDate: e.target.value }))} />
                           </label>
                         </div>
                         <label className="work-form-field">
-                          <span className="work-form-label">본문 (선택)</span>
+                          <span className="work-form-label">Body (optional)</span>
                           <div className="work-form-rich">
                             <div className="rich-toolbar">
                               <button type="button" onClick={() => execNewWorkEditor('bold')}>B</button>
@@ -553,8 +553,8 @@ export function GoalListTab(props: GoalListTabProps) {
                           </div>
                         </label>
                         <div className="work-form-actions">
-                          <button type="button" className="work-form-btn-cancel" onClick={() => setAddingWorkGoalId(null)}>취소</button>
-                          <button type="submit" className="work-form-btn-submit">저장</button>
+                          <button type="button" className="work-form-btn-cancel" onClick={() => setAddingWorkGoalId(null)}>Cancel</button>
+                          <button type="submit" className="work-form-btn-submit">Save</button>
                         </div>
                       </form>
                     )}
@@ -566,9 +566,9 @@ export function GoalListTab(props: GoalListTabProps) {
           </div>
 
           <div className="independent-section">
-            <h3 className="section-title">독립 Work</h3>
+            <h3 className="section-title">Standalone Work</h3>
             <button type="button" className="btn-add-independent-work" onClick={openAddIndependentWork}>
-              독립 Work 생성
+              Create Standalone Work
             </button>
 
             {addingIndependentWork && (
@@ -577,7 +577,7 @@ export function GoalListTab(props: GoalListTabProps) {
                   <input
                     type="text"
                     className="work-form-input"
-                    placeholder="Work 제목"
+                    placeholder="Work title"
                     value={newWorkForm.title}
                     onChange={(e) => setNewWorkForm((p) => ({ ...p, title: e.target.value }))}
                     autoFocus
@@ -587,23 +587,23 @@ export function GoalListTab(props: GoalListTabProps) {
                     value={newWorkForm.status}
                     onChange={(e) => setNewWorkForm((p) => ({ ...p, status: e.target.value as WorkStatus }))}
                   >
-                    <option value="NOT_STARTED">시작 전</option>
-                    <option value="IN_PROGRESS">진행 중</option>
-                    <option value="DONE">완료</option>
+                    <option value="NOT_STARTED">Not started</option>
+                    <option value="IN_PROGRESS">In progress</option>
+                    <option value="DONE">Done</option>
                   </select>
                 </div>
                 <div className="work-form-dates">
                   <label className="work-form-field">
-                    <span className="work-form-label">목표 시작일</span>
+                    <span className="work-form-label">Start date</span>
                     <input type="date" className="work-form-input" value={newWorkForm.startDate} onChange={(e) => setNewWorkForm((p) => ({ ...p, startDate: e.target.value }))} />
                   </label>
                   <label className="work-form-field">
-                    <span className="work-form-label">목표 완료일</span>
+                    <span className="work-form-label">End date</span>
                     <input type="date" className="work-form-input" value={newWorkForm.endDate} onChange={(e) => setNewWorkForm((p) => ({ ...p, endDate: e.target.value }))} />
                   </label>
                 </div>
                 <label className="work-form-field">
-                  <span className="work-form-label">본문 (선택)</span>
+                  <span className="work-form-label">Body (optional)</span>
                   <div className="work-form-rich">
                     <div className="rich-toolbar">
                       <button type="button" onClick={() => execNewWorkEditor('bold')}>B</button>
@@ -624,8 +624,8 @@ export function GoalListTab(props: GoalListTabProps) {
                   </div>
                 </label>
                 <div className="work-form-actions">
-                  <button type="button" className="work-form-btn-cancel" onClick={() => setAddingIndependentWork(false)}>취소</button>
-                  <button type="submit" className="work-form-btn-submit">저장</button>
+                  <button type="button" className="work-form-btn-cancel" onClick={() => setAddingIndependentWork(false)}>Cancel</button>
+                  <button type="submit" className="work-form-btn-submit">Save</button>
                 </div>
               </form>
             )}

@@ -36,22 +36,22 @@ export function CycleSelector({
         value={selectedCycleId ?? ''}
         onChange={(event) => onSelect(event.target.value)}
       >
-        {cycles.length === 0 && <option value="">Cycle 생성 필요</option>}
+        {cycles.length === 0 && <option value="">Create a Cycle first</option>}
         {cycles.map((cycle) => (
           <option key={cycle.id} value={cycle.id}>{cycle.name}</option>
         ))}
       </select>
       <form onSubmit={submit} className="inline-form">
         <input
-          placeholder="새 Cycle 이름"
+          placeholder="New Cycle name"
           value={cycleName}
           onChange={(event) => setCycleName(event.target.value)}
         />
-        <button type="button" onClick={onPickParentDir}>저장 폴더</button>
-        <button type="submit">생성</button>
-        <button type="button" onClick={onImportCycle}>불러오기</button>
+        <button type="button" onClick={onPickParentDir}>Storage folder</button>
+        <button type="submit">Create</button>
+        <button type="button" onClick={onImportCycle}>Import</button>
       </form>
-      <small className="folder-path">저장 상위 폴더: {parentDir || '(선택 필요)'}</small>
+      <small className="folder-path">Parent folder: {parentDir || '(not selected)'}</small>
     </section>
   );
 }
