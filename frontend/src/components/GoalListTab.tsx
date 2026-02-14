@@ -222,7 +222,6 @@ export function GoalListTab(props: GoalListTabProps) {
         onContextMenu={(e) => {
           e.preventDefault();
           e.stopPropagation();
-          setSelectedWorkId(work.id);
           setContextMenuTarget({ kind: 'work', id: work.id, title: work.title, x: e.clientX, y: e.clientY });
         }}
       >
