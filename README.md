@@ -7,6 +7,7 @@
 사전 준비:
 - Node.js 18+
 - Rust (stable)
+- Windows의 경우: Visual Studio 2022 Build Tools (C++/MSVC + Windows SDK)
 - OS별 Tauri 빌드 의존성
 
 ### 1) 데스크탑 앱 빌드
@@ -19,6 +20,22 @@ build-desktop.bat
 Linux/macOS:
 ```bash
 ./build-desktop.sh
+```
+
+직접 빌드(스크립트 없이):
+
+```bash
+cd frontend
+npm install
+npm run desktop:build
+```
+
+직접 빌드(Windows PowerShell/CMD):
+
+```bat
+cd frontend
+npm install
+npm run desktop:build
 ```
 
 빌드 결과:
@@ -41,6 +58,13 @@ Linux/macOS:
   - `cd frontend && npm install`
 - `cargo: command not found`:
   - Rust 설치: https://rustup.rs
+- `link.exe not found` 또는 `the msvc targets depend on the msvc linker`:
+  - Visual Studio 2022 Build Tools 설치
+  - 설치 시 `Desktop development with C++`, `MSVC v143`, `Windows 10/11 SDK` 선택
+  - 설치 후 `x64 Native Tools Command Prompt for VS 2022`에서 다시 빌드
+- `` `icons/icon.ico` not found ``:
+  - `frontend/src-tauri/icons/icon.ico` 파일이 필요함
+  - 현재 저장소에는 기본 아이콘이 포함되어 있으니 최신 코드로 다시 시도
 
 ## 웹 실행 (기존 유지)
 

@@ -6,7 +6,20 @@ import { TabBar } from './components/TabBar';
 import { TodoTab } from './components/TodoTab';
 import { AppIndex, CycleData, Goal, Task, Work, WorkStatus } from './types/models';
 import { uid } from './utils/model';
-import { createCycle, importCycle, loadCycleData, loadIndex, pickFolder, saveCycleData, selectCycle } from './utils/storage';
+import {
+  closeDesktopWindow,
+  createCycle,
+  importCycle,
+  isDesktopRuntime,
+  loadCycleData,
+  loadIndex,
+  minimizeDesktopWindow,
+  pickFolder,
+  saveCycleData,
+  selectCycle,
+  startDesktopWindowDragging,
+  toggleMaximizeDesktopWindow
+} from './utils/storage';
 
 const emptyIndex: AppIndex = {
   cycles: [],
@@ -45,6 +58,7 @@ export default function App() {
   const [hideCompletedTodoTab, setHideCompletedTodoTab] = useState(false);
   const [cycleParentDir, setCycleParentDir] = useState('');
   const [loading, setLoading] = useState(true);
+  const isDesktop = isDesktopRuntime();
 
   const selectedCycleId = index.selectedCycleId;
 
@@ -219,7 +233,18 @@ export default function App() {
   }, [index.cycles, selectedCycleId]);
 
   return (
-    <div className="app-shell">
+    <div className={`app-shell ${isDesktop ? 'desktop-shell' : ''}`}>
+      {isDesktop && (
+        <div className="window-chrome">
+          <div className="window-drag-region" onMouseDown={() => void startDesktopWindowDragging()} />
+          <div className="window-controls">
+            <button type="button" className="window-control-btn" onClick={() => void minimizeDesktopWindow()} aria-label="최소화">_</button>
+            <button type="button" className="window-control-btn maximize" onClick={() => void toggleMaximizeDesktopWindow()} aria-label="최대화/복원">□</button>
+            <button type="button" className="window-control-btn close" onClick={() => void closeDesktopWindow()} aria-label="닫기">x</button>
+          </div>
+        </div>
+      )}
+
       <header className="top-bar">
         <div className="top-bar-head">
           <h1>Cycle</h1>

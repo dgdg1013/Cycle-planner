@@ -13,12 +13,32 @@ const emptyIndex: AppIndex = {
 let selectedParentHandle: FileSystemDirectoryHandle | null = null;
 let selectedParentLabel = '';
 
+type TauriInvoke = <T = unknown>(cmd: string, args?: Record<string, unknown>) => Promise<T>;
+
+function getTauriInvoke(): TauriInvoke | null {
+  if (typeof window === 'undefined') return null;
+  const candidate = (window as Window & { __TAURI_INTERNALS__?: { invoke?: TauriInvoke } }).__TAURI_INTERNALS__?.invoke;
+  return typeof candidate === 'function' ? candidate : null;
+}
+
+function isTauriDesktop(): boolean {
+  return getTauriInvoke() !== null;
+}
+
+async function invokeDesktop<T>(cmd: string, args?: Record<string, unknown>): Promise<T> {
+  const invoke = getTauriInvoke();
+  if (!invoke) {
+    throw new Error('데스크탑 런타임을 찾을 수 없습니다.');
+  }
+  return invoke<T>(cmd, args);
+}
+
 function cycleKey(cycleId: string): string {
   return `cycle_planner_cycle_${cycleId}`;
 }
 
 function supportsFsApi(): boolean {
-  return typeof window !== 'undefined' && 'showDirectoryPicker' in window;
+  return typeof window !== 'undefined' && !isTauriDesktop() && 'showDirectoryPicker' in window;
 }
 
 function uid(prefix: string): string {
@@ -91,6 +111,12 @@ async function readCycleFile(handle: FileSystemDirectoryHandle): Promise<CycleDa
 }
 
 export async function pickFolder(): Promise<string | null> {
+  if (isTauriDesktop()) {
+    const path = await invokeDesktop<string | null>('pick_folder');
+    selectedParentLabel = path ?? '';
+    return path;
+  }
+
   if (!supportsFsApi()) {
     throw new Error('이 브라우저는 폴더 선택 API를 지원하지 않습니다. Chrome/Edge 최신 버전을 사용하세요.');
   }
@@ -102,6 +128,10 @@ export async function pickFolder(): Promise<string | null> {
 }
 
 export async function loadIndex(): Promise<AppIndex> {
+  if (isTauriDesktop()) {
+    return invokeDesktop<AppIndex>('load_index');
+  }
+
   const raw = localStorage.getItem(INDEX_KEY);
   if (!raw) return emptyIndex;
 
@@ -113,6 +143,15 @@ export async function loadIndex(): Promise<AppIndex> {
 }
 
 export async function selectCycle(cycleId: string): Promise<AppIndex> {
+  if (isTauriDesktop()) {
+    const next = await invokeDesktop<AppIndex>('select_cycle', { cycleId });
+    const selected = next.cycles.find((cycle) => cycle.id === cycleId);
+    if (selected?.folderPath) {
+      selectedParentLabel = selected.folderPath;
+    }
+    return next;
+  }
+
   const index = await loadIndex();
   const selected = index.cycles.find((cycle) => cycle.id === cycleId);
   const next = { ...index, selectedCycleId: cycleId };
@@ -125,6 +164,12 @@ export async function selectCycle(cycleId: string): Promise<AppIndex> {
 }
 
 export async function createCycle(name: string, _parentDir: string): Promise<AppIndex> {
+  if (isTauriDesktop()) {
+    const next = await invokeDesktop<AppIndex>('create_cycle', { name, parentDir: _parentDir });
+    selectedParentLabel = _parentDir;
+    return next;
+  }
+
   if (!selectedParentHandle) {
     throw new Error('먼저 저장 폴더를 선택하세요.');
   }
@@ -163,6 +208,12 @@ export async function createCycle(name: string, _parentDir: string): Promise<App
 }
 
 export async function importCycle(_folderPath: string): Promise<AppIndex> {
+  if (isTauriDesktop()) {
+    const next = await invokeDesktop<AppIndex>('import_cycle', { folderPath: _folderPath });
+    selectedParentLabel = _folderPath;
+    return next;
+  }
+
   if (!supportsFsApi()) {
     throw new Error('이 브라우저는 폴더 선택 API를 지원하지 않습니다.');
   }
@@ -215,6 +266,10 @@ export async function importCycle(_folderPath: string): Promise<AppIndex> {
 }
 
 export async function loadCycleData(cycleId: string): Promise<CycleData> {
+  if (isTauriDesktop()) {
+    return invokeDesktop<CycleData>('load_cycle_data', { cycleId });
+  }
+
   const index = await loadIndex();
   const cycleMeta = index.cycles.find((cycle) => cycle.id === cycleId);
 
@@ -250,6 +305,11 @@ export async function loadCycleData(cycleId: string): Promise<CycleData> {
 }
 
 export async function saveCycleData(cycleId: string, data: CycleData): Promise<void> {
+  if (isTauriDesktop()) {
+    await invokeDesktop<void>('save_cycle_data', { cycleId, data });
+    return;
+  }
+
   const handle = await getCycleHandle(cycleId);
   if (handle) {
     const perm = await ensureReadWritePermission(handle);
@@ -264,4 +324,28 @@ export async function saveCycleData(cycleId: string, data: CycleData): Promise<v
 
 export function getSelectedFolderLabel(): string {
   return selectedParentLabel;
+}
+
+export function isDesktopRuntime(): boolean {
+  return isTauriDesktop();
+}
+
+export async function minimizeDesktopWindow(): Promise<void> {
+  if (!isTauriDesktop()) return;
+  await invokeDesktop<void>('window_minimize');
+}
+
+export async function toggleMaximizeDesktopWindow(): Promise<void> {
+  if (!isTauriDesktop()) return;
+  await invokeDesktop<void>('window_toggle_maximize');
+}
+
+export async function closeDesktopWindow(): Promise<void> {
+  if (!isTauriDesktop()) return;
+  await invokeDesktop<void>('window_close');
+}
+
+export async function startDesktopWindowDragging(): Promise<void> {
+  if (!isTauriDesktop()) return;
+  await invokeDesktop<void>('window_start_dragging');
 }

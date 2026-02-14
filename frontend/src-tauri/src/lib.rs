@@ -139,6 +139,11 @@ fn find_cycle(index: &IndexData, cycle_id: &str) -> Option<CycleMeta> {
     index.cycles.iter().find(|c| c.id == cycle_id).cloned()
 }
 
+fn main_window(app: &tauri::AppHandle) -> Result<tauri::WebviewWindow, String> {
+    app.get_webview_window("main")
+        .ok_or_else(|| "메인 창을 찾을 수 없습니다.".to_string())
+}
+
 #[tauri::command]
 fn pick_folder() -> Option<String> {
     FileDialog::new().pick_folder().map(|p| p.to_string_lossy().to_string())
@@ -266,6 +271,39 @@ fn save_cycle_data(app: tauri::AppHandle, cycleId: String, data: CycleData) -> R
     write_cycle_data(&cycle, &next)
 }
 
+#[tauri::command]
+fn window_minimize(app: tauri::AppHandle) -> Result<(), String> {
+    let window = main_window(&app)?;
+    window.minimize().map_err(|e| format!("창 최소화 실패: {e}"))
+}
+
+#[tauri::command]
+fn window_toggle_maximize(app: tauri::AppHandle) -> Result<(), String> {
+    let window = main_window(&app)?;
+    let is_maximized = window
+        .is_maximized()
+        .map_err(|e| format!("창 상태 조회 실패: {e}"))?;
+    if is_maximized {
+        window.unmaximize().map_err(|e| format!("창 복원 실패: {e}"))
+    } else {
+        window.maximize().map_err(|e| format!("창 최대화 실패: {e}"))
+    }
+}
+
+#[tauri::command]
+fn window_close(app: tauri::AppHandle) -> Result<(), String> {
+    let window = main_window(&app)?;
+    window.close().map_err(|e| format!("창 닫기 실패: {e}"))
+}
+
+#[tauri::command]
+fn window_start_dragging(app: tauri::AppHandle) -> Result<(), String> {
+    let window = main_window(&app)?;
+    window
+        .start_dragging()
+        .map_err(|e| format!("창 드래그 시작 실패: {e}"))
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
@@ -276,7 +314,11 @@ pub fn run() {
             create_cycle,
             import_cycle,
             load_cycle_data,
-            save_cycle_data
+            save_cycle_data,
+            window_minimize,
+            window_toggle_maximize,
+            window_close,
+            window_start_dragging
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

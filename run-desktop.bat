@@ -26,6 +26,14 @@ if errorlevel 1 (
   goto :fail
 )
 
+where link >nul 2>nul
+if errorlevel 1 (
+  echo MSVC linker ^(link.exe^) not found.
+  echo Install "Build Tools for Visual Studio 2022" with C++ build tools and Windows SDK.
+  echo Then run this script again from "x64 Native Tools Command Prompt for VS 2022"
+  goto :fail
+)
+
 call npm run desktop:dev
 endlocal
 exit /b 0
