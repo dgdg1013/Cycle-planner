@@ -180,6 +180,23 @@ h4 {
   gap: 8px;
 }
 
+.cycle-selector button,
+.inline-form button {
+  padding: 6px 11px;
+  border: 1px solid var(--border-default);
+  background: #f7f2e9;
+  color: var(--text-secondary);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.cycle-selector button:hover,
+.inline-form button:hover {
+  border-color: var(--border-strong);
+  background: #fbf7ef;
+  color: var(--text-primary);
+}
+
 .folder-path {
   width: 100%;
   margin-top: 2px;
@@ -1189,6 +1206,39 @@ button:active {
   color: #f7f9ff;
 }
 
+:root[data-theme='dark'] .goal-card {
+  background: linear-gradient(160deg, #262a31, #232830);
+  border-color: rgba(156, 167, 191, 0.3);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
+}
+
+:root[data-theme='dark'] .goal-card p {
+  color: #cbc3b3;
+}
+
+:root[data-theme='dark'] .goal-progress {
+  background: rgba(255, 255, 255, 0.14);
+}
+
+:root[data-theme='dark'] .goal-progress-text.on-track {
+  color: #d8cfbe;
+}
+
+:root[data-theme='dark'] .badge.not_started {
+  background: #3a4350;
+  color: #dbe3f0;
+}
+
+:root[data-theme='dark'] .badge.in_progress {
+  background: #2d4878;
+  color: #dce8ff;
+}
+
+:root[data-theme='dark'] .badge.done {
+  background: #2d5b47;
+  color: #d9f4e2;
+}
+
 :root[data-theme='dark'] .work-card {
   background: linear-gradient(180deg, #252c36, #222833);
   border-color: rgba(255, 255, 255, 0.18);
@@ -1233,6 +1283,20 @@ button:active {
 
 :root[data-theme='dark'] .tab-bar button.active {
   box-shadow: 0 0 0 1px rgba(111, 151, 242, 0.3), 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+:root[data-theme='dark'] .cycle-selector button,
+:root[data-theme='dark'] .inline-form button {
+  background: #2a313d;
+  border-color: rgba(255, 255, 255, 0.2);
+  color: #d5deee;
+}
+
+:root[data-theme='dark'] .cycle-selector button:hover,
+:root[data-theme='dark'] .inline-form button:hover {
+  background: #333c4a;
+  border-color: rgba(255, 255, 255, 0.3);
+  color: #eef3ff;
 }
 
 @media (max-width: 960px) {
