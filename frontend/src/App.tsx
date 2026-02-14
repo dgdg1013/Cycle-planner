@@ -200,6 +200,13 @@ export default function App() {
     });
   };
 
+  const updateTask = async (taskId: string, patch: Partial<Pick<Task, 'title' | 'dueDate'>>) => {
+    await persistCycleData({
+      ...cycleData,
+      tasks: cycleData.tasks.map((task) => (task.id === taskId ? { ...task, ...patch } : task))
+    });
+  };
+
   const deleteTask = async (taskId: string) => {
     await persistCycleData({
       ...cycleData,
@@ -280,6 +287,7 @@ export default function App() {
             onCreateTask={(payload) => void createTask(payload)}
             onChangeWorkStatus={(workId, status) => void changeWorkStatus(workId, status)}
             onUpdateWork={(workId, patch) => void updateWork(workId, patch)}
+            onUpdateTask={(taskId, patch) => void updateTask(taskId, patch)}
             onToggleTask={(taskId) => void toggleTaskDone(taskId)}
             onDeleteGoal={(goalId) => void deleteGoal(goalId)}
             onDeleteWork={(workId) => void deleteWork(workId)}

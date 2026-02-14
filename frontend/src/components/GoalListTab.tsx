@@ -1,4 +1,4 @@
-import { FormEvent, useEffect, useMemo, useRef, useState } from 'react';
+import { FormEvent, MouseEvent, useEffect, useMemo, useRef, useState } from 'react';
 import { Goal, Task, Work, WorkStatus } from '../types/models';
 import { computeGoalProgress, computeGoalStatus, GOAL_STATUS_LABEL, isCompletedGoal, WORK_STATUS_LABEL } from '../utils/model';
 import { WorkDetailPanel } from './WorkDetailPanel';
@@ -14,6 +14,7 @@ interface GoalListTabProps {
   onCreateTask: (payload: { title: string; workId: string; dueDate?: string }) => void;
   onChangeWorkStatus: (workId: string, status: WorkStatus) => void;
   onUpdateWork: (workId: string, patch: Partial<Pick<Work, 'title' | 'status' | 'startDate' | 'endDate' | 'body'>>) => void;
+  onUpdateTask: (taskId: string, patch: Partial<Pick<Task, 'title' | 'dueDate'>>) => void;
   onToggleTask: (taskId: string) => void;
   onDeleteGoal: (goalId: string) => void;
   onDeleteWork: (workId: string) => void;
@@ -21,16 +22,20 @@ interface GoalListTabProps {
 }
 
 type DeleteTarget = { kind: 'task'; id: string; title: string };
-type ContextMenuTarget = { kind: 'goal' | 'work'; id: string; title: string; x: number; y: number };
+type ContextMenuTarget =
+  | { kind: 'goal' | 'work'; id: string; title: string; x: number; y: number }
+  | { kind: 'task'; id: string; workId: string; title: string; dueDate?: string; x: number; y: number };
 
 function TaskDisplay({
   task,
   onToggle,
+  onContextMenu,
   onDelete,
   hideCompleted
 }: {
   task: Task;
   onToggle: (id: string) => void;
+  onContextMenu: (event: MouseEvent, task: Task) => void;
   onDelete: (task: Task) => void;
   hideCompleted: boolean;
 }) {
@@ -38,7 +43,7 @@ function TaskDisplay({
   const dateLabel = task.dueDate || '-';
 
   return (
-    <label className={`task-item ${task.done ? 'done' : ''}`}>
+    <label className={`task-item ${task.done ? 'done' : ''}`} onContextMenu={(e) => onContextMenu(e, task)}>
       <input type="checkbox" checked={task.done} onChange={() => onToggle(task.id)} />
       <span className="task-date">({dateLabel})</span>
       <span className="task-title">{task.title}</span>
@@ -71,6 +76,7 @@ export function GoalListTab(props: GoalListTabProps) {
     onCreateTask,
     onChangeWorkStatus,
     onUpdateWork,
+    onUpdateTask,
     onToggleTask,
     onDeleteGoal,
     onDeleteWork,
@@ -80,7 +86,7 @@ export function GoalListTab(props: GoalListTabProps) {
   const [goalModalOpen, setGoalModalOpen] = useState(false);
   const [addingWorkGoalId, setAddingWorkGoalId] = useState<string | null>(null);
   const [addingIndependentWork, setAddingIndependentWork] = useState(false);
-  const [taskModalWorkId, setTaskModalWorkId] = useState<string | null>(null);
+  const [taskModal, setTaskModal] = useState<{ workId: string; mode: 'create' | 'edit'; taskId?: string } | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<DeleteTarget | null>(null);
   const [contextMenuTarget, setContextMenuTarget] = useState<ContextMenuTarget | null>(null);
   const [selectedWorkId, setSelectedWorkId] = useState<string | null>(null);
@@ -181,10 +187,14 @@ export function GoalListTab(props: GoalListTabProps) {
   const saveNewTask = (e: FormEvent, workId: string) => {
     e.preventDefault();
     if (!newTaskForm.title.trim()) return;
-    onCreateTask({ title: newTaskForm.title.trim(), workId, dueDate: newTaskForm.dueDate || undefined });
+    if (taskModal?.mode === 'edit' && taskModal.taskId) {
+      onUpdateTask(taskModal.taskId, { title: newTaskForm.title.trim(), dueDate: newTaskForm.dueDate || undefined });
+    } else {
+      onCreateTask({ title: newTaskForm.title.trim(), workId, dueDate: newTaskForm.dueDate || undefined });
+    }
     setNewTaskForm({ title: '', dueDate: '' });
     setOpenWorks((p) => ({ ...p, [workId]: true }));
-    setTaskModalWorkId(null);
+    setTaskModal(null);
   };
 
   const openAddWorkForGoal = (goalId: string) => {
@@ -206,7 +216,14 @@ export function GoalListTab(props: GoalListTabProps) {
 
   const openTaskModal = (workId: string) => {
     setOpenWorks((p) => ({ ...p, [workId]: true }));
-    globalThis.setTimeout(() => setTaskModalWorkId(workId), 0);
+    setNewTaskForm({ title: '', dueDate: '' });
+    globalThis.setTimeout(() => setTaskModal({ workId, mode: 'create' }), 0);
+  };
+
+  const openTaskEditModal = (task: Task) => {
+    setOpenWorks((p) => ({ ...p, [task.workId]: true }));
+    setNewTaskForm({ title: task.title, dueDate: task.dueDate || '' });
+    globalThis.setTimeout(() => setTaskModal({ workId: task.workId, mode: 'edit', taskId: task.id }), 0);
   };
 
   const renderWorkCard = (work: Work) => {
@@ -270,6 +287,19 @@ export function GoalListTab(props: GoalListTabProps) {
                 key={task.id}
                 task={task}
                 onToggle={onToggleTask}
+                onContextMenu={(event, target) => {
+                  event.preventDefault();
+                  event.stopPropagation();
+                  setContextMenuTarget({
+                    kind: 'task',
+                    id: target.id,
+                    workId: target.workId,
+                    title: target.title,
+                    dueDate: target.dueDate,
+                    x: event.clientX,
+                    y: event.clientY
+                  });
+                }}
                 onDelete={(target) => setDeleteTarget({ kind: 'task', id: target.id, title: target.title })}
                 hideCompleted={hideCompleted}
               />
@@ -331,13 +361,13 @@ export function GoalListTab(props: GoalListTabProps) {
         </div>
       )}
 
-      {taskModalWorkId && (() => {
-        const work = works.find((w) => w.id === taskModalWorkId);
+      {taskModal && (() => {
+        const work = works.find((w) => w.id === taskModal.workId);
         if (!work) return null;
         return (
-          <div className="modal-backdrop" onClick={() => setTaskModalWorkId(null)} role="presentation">
+          <div className="modal-backdrop" onClick={() => setTaskModal(null)} role="presentation">
             <div className="modal-box" onClick={(e) => e.stopPropagation()} role="dialog" aria-modal="true">
-              <h3>Task 추가 - {work.title}</h3>
+              <h3>{taskModal.mode === 'edit' ? 'Task 수정' : 'Task 추가'} - {work.title}</h3>
               <form onSubmit={(e) => saveNewTask(e, work.id)}>
                 <label>
                   Task 제목
@@ -353,8 +383,8 @@ export function GoalListTab(props: GoalListTabProps) {
                   <input type="date" value={newTaskForm.dueDate} onChange={(e) => setNewTaskForm((p) => ({ ...p, dueDate: e.target.value }))} />
                 </label>
                 <div className="modal-actions">
-                  <button type="button" className="btn-cancel" onClick={() => setTaskModalWorkId(null)}>취소</button>
-                  <button type="submit" className="btn-submit">추가</button>
+                  <button type="button" className="btn-cancel" onClick={() => setTaskModal(null)}>취소</button>
+                  <button type="submit" className="btn-submit">{taskModal.mode === 'edit' ? '저장' : '추가'}</button>
                 </div>
               </form>
             </div>
@@ -406,16 +436,30 @@ export function GoalListTab(props: GoalListTabProps) {
                 [{contextMenuTarget.title}] Work 생성
               </button>
             )}
+            {contextMenuTarget.kind === 'task' && (
+              <button
+                type="button"
+                className="context-menu-item"
+                onClick={() => {
+                  const targetTask = tasks.find((task) => task.id === contextMenuTarget.id);
+                  if (targetTask) openTaskEditModal(targetTask);
+                  setContextMenuTarget(null);
+                }}
+              >
+                [{contextMenuTarget.title}] Task 수정
+              </button>
+            )}
             <button
               type="button"
               className="context-menu-item danger"
               onClick={() => {
                 if (contextMenuTarget.kind === 'goal') onDeleteGoal(contextMenuTarget.id);
                 if (contextMenuTarget.kind === 'work') onDeleteWork(contextMenuTarget.id);
+                if (contextMenuTarget.kind === 'task') onDeleteTask(contextMenuTarget.id);
                 setContextMenuTarget(null);
               }}
             >
-              [{contextMenuTarget.title}] {contextMenuTarget.kind === 'goal' ? 'Goal' : 'Work'} 삭제
+              [{contextMenuTarget.title}] {contextMenuTarget.kind === 'goal' ? 'Goal' : contextMenuTarget.kind === 'work' ? 'Work' : 'Task'} 삭제
             </button>
           </div>
         </div>
