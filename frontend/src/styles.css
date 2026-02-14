@@ -114,6 +114,10 @@ h4 {
   padding: 18px 24px 96px;
 }
 
+.desktop-shell {
+  padding-top: 44px;
+}
+
 .window-chrome {
   position: fixed;
   top: 0;
@@ -165,9 +169,7 @@ h4 {
 }
 
 .top-bar {
-  position: sticky;
-  top: 0;
-  z-index: 20;
+  position: relative;
   margin-bottom: 24px;
   padding: 16px 18px;
   border: 1px solid var(--border-default);
@@ -178,10 +180,6 @@ h4 {
   display: flex;
   flex-direction: column;
   gap: 14px;
-}
-
-.desktop-shell .top-bar {
-  top: 30px;
 }
 
 .top-bar-head {
@@ -319,13 +317,17 @@ button:active {
 }
 
 .btn-primary {
-  background: var(--accent);
-  color: #fff;
-  box-shadow: var(--shadow-xs);
+  border: 1px solid color-mix(in oklab, var(--accent) 36%, transparent);
+  background: linear-gradient(180deg, color-mix(in oklab, var(--accent-bg) 72%, white), color-mix(in oklab, var(--accent-bg) 88%, transparent));
+  color: var(--accent);
+  font-weight: 700;
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.5), var(--shadow-xs);
 }
 
 .btn-primary:hover {
-  background: var(--accent-hover);
+  border-color: color-mix(in oklab, var(--accent) 54%, transparent);
+  background: linear-gradient(180deg, color-mix(in oklab, var(--accent-bg-hover) 72%, white), color-mix(in oklab, var(--accent-bg-hover) 90%, transparent));
+  color: var(--accent-hover);
 }
 
 .content > p {
@@ -336,16 +338,6 @@ button:active {
 .loading-state,
 .empty-state {
   font-size: 14px;
-}
-
-.cycle-caption {
-  margin: 0 0 18px !important;
-  padding: 11px 14px;
-  border: 1px solid rgba(49, 94, 184, 0.22);
-  border-radius: var(--radius-md);
-  background: linear-gradient(135deg, rgba(49, 94, 184, 0.08), rgba(49, 94, 184, 0.02));
-  color: #234d9e;
-  font-weight: 600;
 }
 
 .tab-panel {
@@ -365,6 +357,132 @@ button:active {
   gap: 7px;
   align-items: center;
   font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.todo-tab {
+  gap: 14px;
+}
+
+.todo-controls {
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+  padding: 10px 12px;
+  background: color-mix(in oklab, var(--bg-elevated) 94%, white);
+}
+
+.todo-overview {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 13px;
+}
+
+.todo-overview strong {
+  color: var(--text-primary);
+  font-size: 15px;
+}
+
+.todo-filter {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.todo-work-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 12px;
+}
+
+.todo-work-card {
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-lg);
+  background: color-mix(in oklab, var(--bg-elevated) 96%, white);
+  box-shadow: var(--shadow-xs);
+  padding: 12px;
+}
+
+.todo-work-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.todo-work-header h3 {
+  margin: 0;
+  font-size: 15px;
+}
+
+.todo-count {
+  min-width: 24px;
+  height: 24px;
+  padding: 0 8px;
+  border-radius: var(--radius-full);
+  background: var(--accent-bg);
+  color: var(--accent);
+  font-size: 12px;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.todo-task-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.todo-task-row {
+  display: grid;
+  grid-template-columns: 16px 1fr auto;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  background: color-mix(in oklab, var(--bg-elevated-2) 82%, white);
+  padding: 7px 9px;
+}
+
+.todo-task-row:hover {
+  border-color: var(--border-default);
+}
+
+.todo-task-row input[type='checkbox'] {
+  margin: 0;
+  accent-color: var(--accent);
+}
+
+.todo-task-title {
+  font-size: 13px;
+  color: var(--text-primary);
+}
+
+.todo-task-date {
+  font-size: 11px;
+  color: var(--text-tertiary);
+  padding: 3px 6px;
+  border-radius: var(--radius-full);
+  background: var(--bg-active);
+  white-space: nowrap;
+}
+
+.todo-task-row.done .todo-task-title {
+  color: var(--text-tertiary);
+  text-decoration: line-through;
+}
+
+.todo-task-row.done .todo-task-date {
+  opacity: 0.75;
+}
+
+.todo-empty {
+  margin: 0;
+  border: 1px dashed var(--border-default);
+  border-radius: var(--radius-md);
+  padding: 14px;
   color: var(--text-secondary);
 }
 
@@ -497,16 +615,20 @@ button:active {
 }
 
 .btn-add-work {
-  padding: 5px 10px;
-  background: var(--accent);
-  color: #fff;
+  padding: 6px 12px;
+  border: 1px solid color-mix(in oklab, var(--accent) 36%, transparent);
+  background: linear-gradient(180deg, color-mix(in oklab, var(--accent-bg) 72%, white), color-mix(in oklab, var(--accent-bg) 88%, transparent));
+  color: var(--accent);
   font-size: 12px;
-  font-weight: 600;
+  font-weight: 700;
   letter-spacing: 0.01em;
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.48), var(--shadow-xs);
 }
 
 .btn-add-work:hover {
-  background: var(--accent-hover);
+  border-color: color-mix(in oklab, var(--accent) 54%, transparent);
+  background: linear-gradient(180deg, color-mix(in oklab, var(--accent-bg-hover) 72%, white), color-mix(in oklab, var(--accent-bg-hover) 90%, transparent));
+  color: var(--accent-hover);
 }
 
 .work-list,
@@ -699,9 +821,16 @@ button:active {
 .btn-add-independent-work {
   margin-bottom: 10px;
   padding: 6px 12px;
-  background: var(--accent-bg);
+  border: 1px solid color-mix(in oklab, var(--accent) 30%, transparent);
+  background: linear-gradient(180deg, color-mix(in oklab, var(--accent-bg) 64%, white), color-mix(in oklab, var(--accent-bg) 84%, transparent));
   color: var(--accent);
-  font-weight: 600;
+  font-weight: 700;
+}
+
+.btn-add-independent-work:hover {
+  border-color: color-mix(in oklab, var(--accent) 48%, transparent);
+  background: linear-gradient(180deg, color-mix(in oklab, var(--accent-bg-hover) 66%, white), color-mix(in oklab, var(--accent-bg-hover) 86%, transparent));
+  color: var(--accent-hover);
 }
 
 .task-list {
@@ -1246,18 +1375,41 @@ button:active {
 :root[data-theme='dark'] .calendar-nav button,
 :root[data-theme='dark'] .tab-bar button,
 :root[data-theme='dark'] .modal-box,
-:root[data-theme='dark'] .context-menu,
-:root[data-theme='dark'] .cycle-caption {
+:root[data-theme='dark'] .context-menu {
   background: #242a33;
   color: var(--text-primary);
 }
 
-:root[data-theme='dark'] .tab-bar button.active,
+:root[data-theme='dark'] .todo-controls,
+:root[data-theme='dark'] .todo-work-card {
+  background: #242a33;
+  border-color: rgba(255, 255, 255, 0.17);
+}
+
+:root[data-theme='dark'] .todo-task-row {
+  background: #2a313d;
+}
+
+:root[data-theme='dark'] .todo-task-row:hover {
+  border-color: rgba(255, 255, 255, 0.24);
+}
+
+:root[data-theme='dark'] .todo-count {
+  background: rgba(111, 151, 242, 0.2);
+  color: #cfe0ff;
+}
+
+:root[data-theme='dark'] .todo-task-date {
+  background: rgba(255, 255, 255, 0.1);
+  color: #bdc7d8;
+}
+
 :root[data-theme='dark'] .btn-primary,
-:root[data-theme='dark'] .btn-submit,
-:root[data-theme='dark'] .btn-add-work {
-  background: var(--accent);
-  color: #f7f9ff;
+:root[data-theme='dark'] .btn-add-work,
+:root[data-theme='dark'] .btn-add-independent-work {
+  border-color: rgba(111, 151, 242, 0.44);
+  background: linear-gradient(180deg, rgba(111, 151, 242, 0.25), rgba(111, 151, 242, 0.16));
+  color: #d9e6ff;
 }
 
 :root[data-theme='dark'] .goal-card {
@@ -1441,6 +1593,10 @@ button:active {
 @media (max-width: 960px) {
   .app-shell {
     padding: 12px 12px 96px;
+  }
+
+  .desktop-shell {
+    padding-top: 40px;
   }
 
   .top-bar {

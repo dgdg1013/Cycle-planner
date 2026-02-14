@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { CalendarTab } from './components/CalendarTab';
 import { CycleSelector } from './components/CycleSelector';
 import { GoalListTab } from './components/GoalListTab';
@@ -227,11 +227,6 @@ export default function App() {
 
   const hasCycle = index.cycles.length > 0 && Boolean(selectedCycleId);
 
-  const selectedCycleName = useMemo(() => {
-    const selected = index.cycles.find((cycle) => cycle.id === selectedCycleId);
-    return selected?.name ?? '';
-  }, [index.cycles, selectedCycleId]);
-
   return (
     <div className={`app-shell ${isDesktop ? 'desktop-shell' : ''}`}>
       {isDesktop && (
@@ -272,7 +267,6 @@ export default function App() {
       <main className="content">
         {loading && <p className="loading-state">데이터 로딩 중...</p>}
         {!loading && !hasCycle && <p className="empty-state">위에서 Cycle을 생성하거나 불러오세요.</p>}
-        {!loading && hasCycle && <p className="cycle-caption">{selectedCycleName}</p>}
 
         {hasCycle && tab === 'goals' && (
           <GoalListTab
