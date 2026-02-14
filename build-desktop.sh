@@ -8,6 +8,22 @@ if [ ! -d node_modules ]; then
   npm install
 fi
 
+if [ ! -x "node_modules/.bin/tauri" ]; then
+  echo "Tauri CLI is missing. Installing dependencies again..."
+  npm install
+fi
+
+if [ ! -x "node_modules/.bin/tauri" ]; then
+  echo "Tauri CLI is still missing."
+  echo "Run: cd frontend && npm install"
+  exit 1
+fi
+
+if ! command -v cargo >/dev/null 2>&1; then
+  echo "Rust/Cargo not found. Install Rust first: https://rustup.rs"
+  exit 1
+fi
+
 echo "Building desktop app bundle..."
 npm run desktop:build
 

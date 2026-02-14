@@ -36,6 +36,12 @@ Linux/macOS:
 ./launch-desktop.sh
 ```
 
+문제 해결:
+- `tauri: not found` 또는 `Tauri CLI is missing`:
+  - `cd frontend && npm install`
+- `cargo: command not found`:
+  - Rust 설치: https://rustup.rs
+
 ## 웹 실행 (기존 유지)
 
 ```bash
