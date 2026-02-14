@@ -1189,6 +1189,52 @@ button:active {
   color: #f7f9ff;
 }
 
+:root[data-theme='dark'] .work-card {
+  background: linear-gradient(180deg, #252c36, #222833);
+  border-color: rgba(255, 255, 255, 0.18);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.22);
+}
+
+:root[data-theme='dark'] .work-card.status-not_started {
+  background: linear-gradient(180deg, #2a313b, #262d37);
+  border-color: rgba(144, 157, 184, 0.3);
+}
+
+:root[data-theme='dark'] .work-card.status-in_progress {
+  background: linear-gradient(180deg, #263247, #242f43);
+  border-color: rgba(109, 143, 214, 0.38);
+}
+
+:root[data-theme='dark'] .work-card.status-done {
+  background: linear-gradient(180deg, #24383a, #223234);
+  border-color: rgba(104, 162, 138, 0.36);
+}
+
+:root[data-theme='dark'] .work-card:hover {
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.28);
+}
+
+:root[data-theme='dark'] .tab-bar {
+  background: linear-gradient(180deg, rgba(20, 24, 30, 0.72), rgba(20, 24, 30, 0.94));
+  border-top: 1px solid rgba(255, 255, 255, 0.14);
+}
+
+:root[data-theme='dark'] .tab-bar button {
+  background: #2a313d;
+  border-color: rgba(255, 255, 255, 0.18);
+  color: #d4dceb;
+}
+
+:root[data-theme='dark'] .tab-bar button:hover {
+  background: #333c4b;
+  border-color: rgba(255, 255, 255, 0.28);
+  color: #eef3ff;
+}
+
+:root[data-theme='dark'] .tab-bar button.active {
+  box-shadow: 0 0 0 1px rgba(111, 151, 242, 0.3), 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
 @media (max-width: 960px) {
   .app-shell {
     padding: 12px 12px 96px;
