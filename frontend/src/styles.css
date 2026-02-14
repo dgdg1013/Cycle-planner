@@ -516,9 +516,15 @@ button:active {
 .goal-card {
   position: relative;
   padding: 20px 22px;
-  background: linear-gradient(160deg, color-mix(in oklab, var(--goal-card-bg) 93%, white), var(--goal-card-bg));
-  border: 1px solid var(--goal-card-border);
+  background: #fffdf9;
+  border: 1px solid var(--border-default);
   box-shadow: var(--shadow-sm);
+}
+
+.goal-card.goal-card-done {
+  background: #f2eee8;
+  border-color: rgba(121, 110, 95, 0.2);
+  box-shadow: var(--shadow-xs);
 }
 
 .goal-card-header-row {
@@ -1426,9 +1432,15 @@ button:active {
 }
 
 :root[data-theme='dark'] .goal-card {
-  background: linear-gradient(160deg, #262a31, #232830);
-  border-color: rgba(156, 167, 191, 0.3);
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
+  background: #2b313a;
+  border-color: rgba(255, 255, 255, 0.2);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.22);
+}
+
+:root[data-theme='dark'] .goal-card.goal-card-done {
+  background: #252b33;
+  border-color: rgba(255, 255, 255, 0.12);
+  box-shadow: var(--shadow-xs);
 }
 
 :root[data-theme='dark'] .goal-card p {

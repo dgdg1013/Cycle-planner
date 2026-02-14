@@ -479,7 +479,7 @@ export function GoalListTab(props: GoalListTabProps) {
 
               return (
                 <article
-                  className="card goal-card"
+                  className={`card goal-card ${goalDone ? 'goal-card-done' : ''}`}
                   key={goal.id}
                   onContextMenu={(e) => {
                     e.preventDefault();
