@@ -78,6 +78,19 @@ fn cycle_file_path(folder: &str) -> PathBuf {
     Path::new(folder).join("cycle_data.json")
 }
 
+fn normalize_display_path(path: &str) -> String {
+    #[cfg(windows)]
+    {
+        if let Some(stripped) = path.strip_prefix(r"\\?\UNC\") {
+            return format!(r"\\{}", stripped);
+        }
+        if let Some(stripped) = path.strip_prefix(r"\\?\") {
+            return stripped.to_string();
+        }
+    }
+    path.to_string()
+}
+
 fn read_index(app: &tauri::AppHandle) -> Result<IndexData, String> {
     let path = index_file_path(app)?;
     if !path.exists() {
@@ -88,7 +101,11 @@ fn read_index(app: &tauri::AppHandle) -> Result<IndexData, String> {
     }
 
     let raw = fs::read_to_string(path).map_err(|e| format!("read index error: {e}"))?;
-    serde_json::from_str::<IndexData>(&raw).map_err(|e| format!("parse index error: {e}"))
+    let mut index = serde_json::from_str::<IndexData>(&raw).map_err(|e| format!("parse index error: {e}"))?;
+    for cycle in &mut index.cycles {
+        cycle.folder_path = normalize_display_path(&cycle.folder_path);
+    }
+    Ok(index)
 }
 
 fn write_index(app: &tauri::AppHandle, index: &IndexData) -> Result<(), String> {
@@ -147,10 +164,11 @@ fn main_window(app: &tauri::AppHandle) -> Result<tauri::WebviewWindow, String> {
 #[tauri::command]
 fn pick_folder() -> Option<String> {
     FileDialog::new().pick_folder().map(|p| {
-        fs::canonicalize(&p)
+        let canonical = fs::canonicalize(&p)
             .unwrap_or(p)
             .to_string_lossy()
-            .to_string()
+            .to_string();
+        normalize_display_path(&canonical)
     })
 }
 
@@ -190,7 +208,7 @@ fn create_cycle(app: tauri::AppHandle, name: String, parentDir: String) -> Resul
         id: cycle_id.clone(),
         name,
         created_at: now_iso(),
-        folder_path: folder_path.to_string_lossy().to_string(),
+        folder_path: normalize_display_path(&folder_path.to_string_lossy()),
     };
 
     let data = CycleData {
@@ -235,14 +253,14 @@ fn import_cycle(app: tauri::AppHandle, folderPath: String) -> Result<IndexData, 
     let mut index = read_index(&app)?;
     if let Some(existing) = index.cycles.iter_mut().find(|c| c.id == data.id) {
         existing.name = data.name.clone();
-        existing.folder_path = folderPath.clone();
+        existing.folder_path = normalize_display_path(&folderPath);
         existing.created_at = data.created_at.clone();
     } else {
         index.cycles.push(CycleMeta {
             id: data.id.clone(),
             name: data.name.clone(),
             created_at: data.created_at.clone(),
-            folder_path: folderPath.clone(),
+            folder_path: normalize_display_path(&folderPath),
         });
     }
 
