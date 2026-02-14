@@ -258,8 +258,8 @@ export function GoalListTab(props: GoalListTabProps) {
           />
         </div>
         <p>Status: {WORK_STATUS_LABEL[work.status]}</p>
-        <p>Start date: {work.startDate || '-'}</p>
-        <p>End date: {work.endDate || '-'}</p>
+        <p className="date-meta"><span className="date-meta-label">Start date:</span><span>{work.startDate || '-'}</span></p>
+        <p className="date-meta"><span className="date-meta-label">End date:</span><span>{work.endDate || '-'}</span></p>
         <div className="task-row">
           <button
             type="button"
@@ -499,8 +499,8 @@ export function GoalListTab(props: GoalListTabProps) {
                     <div className="goal-progress-bar" style={{ width: `${progress}%` }} />
                     <span className={`goal-progress-text ${progress > 0 ? 'on-fill' : 'on-track'}`}>{progress}%</span>
                   </div>
-                  <p>Start date: {goal.startDate || '-'}</p>
-                  <p>End date: {goal.endDate || '-'}</p>
+                  <p className="date-meta"><span className="date-meta-label">Start date:</span><span>{goal.startDate || '-'}</span></p>
+                  <p className="date-meta"><span className="date-meta-label">End date:</span><span>{goal.endDate || '-'}</span></p>
 
                   <div className="work-list">
                     {isAddingWork && (
@@ -571,7 +571,7 @@ export function GoalListTab(props: GoalListTabProps) {
 
           <div className="independent-section">
             <h3 className="section-title">Standalone Work</h3>
-            <button type="button" className="btn-add-independent-work" onClick={openAddIndependentWork}>
+            <button type="button" className="btn btn-primary btn-add-independent-work" onClick={openAddIndependentWork}>
               Create Standalone Work
             </button>
 

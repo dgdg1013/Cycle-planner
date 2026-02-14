@@ -940,9 +940,9 @@ button:active {
 
 .section-title {
   margin: 0 0 10px;
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 700;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.05em;
   color: var(--text-tertiary);
   text-transform: uppercase;
 }
@@ -950,16 +950,6 @@ button:active {
 .btn-add-independent-work {
   margin-bottom: 10px;
   padding: 6px 12px;
-  border: 1px solid color-mix(in oklab, var(--accent) 30%, transparent);
-  background: linear-gradient(180deg, color-mix(in oklab, var(--accent-bg) 64%, white), color-mix(in oklab, var(--accent-bg) 84%, transparent));
-  color: var(--accent);
-  font-weight: 700;
-}
-
-.btn-add-independent-work:hover {
-  border-color: color-mix(in oklab, var(--accent) 48%, transparent);
-  background: linear-gradient(180deg, color-mix(in oklab, var(--accent-bg-hover) 66%, white), color-mix(in oklab, var(--accent-bg-hover) 86%, transparent));
-  color: var(--accent-hover);
 }
 
 .task-list {
@@ -1005,6 +995,18 @@ button:active {
 
 .task-item.done .task-date {
   color: var(--text-tertiary);
+}
+
+.date-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.date-meta-label {
+  display: inline-block;
+  min-width: 74px;
+  color: var(--text-secondary);
 }
 
 .task-date {
