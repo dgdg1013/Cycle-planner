@@ -47,14 +47,14 @@ export function TodoTab({ works, tasks, hideCompleted, onHideCompletedChange, on
   return (
     <section className="tab-panel todo-tab">
       <div className="panel-controls todo-controls">
-        <p className="todo-overview">Tasks due in the next 30 days: <strong>{sortedTasks.length}</strong></p>
+        <p className="todo-overview">Tasks in 30days: <strong>{sortedTasks.length}</strong></p>
         <label className="todo-filter">
           <input
             type="checkbox"
             checked={hideCompleted}
             onChange={(event) => onHideCompletedChange(event.target.checked)}
           />
-          Hide completed tasks
+          Hide Finished
         </label>
       </div>
 

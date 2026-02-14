@@ -33,3 +33,5 @@ yarn-error.log*
 
 # Local runtime/test data (do not track)
 testmemo/
+test-storage/
+prompt.txt

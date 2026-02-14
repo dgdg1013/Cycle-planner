@@ -27,6 +27,6 @@
     "active": true,
     "targets": "all",
     "publisher": "doggys",
-    "icon": ["icons/icon.png", "icons/icon.ico"]
+    "icon": ["icons/icon.ico"]
   }
 }

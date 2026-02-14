@@ -3,7 +3,9 @@ use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use std::fs;
 use std::path::{Path, PathBuf};
-use tauri::Manager;
+use tauri::menu::{Menu, MenuEvent, MenuItem};
+use tauri::tray::{MouseButton, TrayIcon, TrayIconBuilder, TrayIconEvent};
+use tauri::{Manager, WindowEvent};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -316,7 +318,7 @@ fn window_toggle_maximize(app: tauri::AppHandle) -> Result<(), String> {
 #[tauri::command]
 fn window_close(app: tauri::AppHandle) -> Result<(), String> {
     let window = main_window(&app)?;
-    window.close().map_err(|e| format!("Failed to close window: {e}"))
+    window.hide().map_err(|e| format!("Failed to hide window: {e}"))
 }
 
 #[tauri::command]
@@ -351,6 +353,50 @@ fn window_toggle_always_on_top(app: tauri::AppHandle) -> Result<bool, String> {
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
+        .setup(|app| {
+            let quit_item = MenuItem::with_id(app, "quit", "Quit", true, None::<&str>)
+                .map_err(|e| format!("Failed to create tray menu item: {e}"))?;
+            let tray_menu = Menu::with_items(app, &[&quit_item])
+                .map_err(|e| format!("Failed to create tray menu: {e}"))?;
+
+            let tray_icon = app
+                .default_window_icon()
+                .ok_or_else(|| "Default window icon is missing.".to_string())?
+                .clone();
+
+            TrayIconBuilder::new()
+                .icon(tray_icon)
+                .menu(&tray_menu)
+                .show_menu_on_left_click(false)
+                .on_menu_event(|app: &tauri::AppHandle, event: MenuEvent| {
+                    if event.id().as_ref() == "quit" {
+                        app.exit(0);
+                    }
+                })
+                .on_tray_icon_event(|tray: &TrayIcon, event: TrayIconEvent| {
+                    if let TrayIconEvent::DoubleClick {
+                        button: MouseButton::Left,
+                        ..
+                    } = event
+                    {
+                        let app = tray.app_handle();
+                        if let Some(window) = app.get_webview_window("main") {
+                            let _ = window.show();
+                            let _ = window.set_focus();
+                        }
+                    }
+                })
+                .build(app)
+                .map_err(|e| format!("Failed to build tray icon: {e}"))?;
+
+            Ok(())
+        })
+        .on_window_event(|window, event| {
+            if let WindowEvent::CloseRequested { api, .. } = event {
+                api.prevent_close();
+                let _ = window.hide();
+            }
+        })
         .invoke_handler(tauri::generate_handler![
             pick_folder,
             load_index,

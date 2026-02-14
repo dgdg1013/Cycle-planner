@@ -85,6 +85,39 @@
   box-sizing: border-box;
 }
 
+* {
+  scrollbar-width: none;
+}
+
+*:hover {
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in oklab, var(--text-tertiary) 56%, transparent) transparent;
+}
+
+*::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: transparent;
+  border-radius: var(--radius-full);
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
+*:hover::-webkit-scrollbar-thumb {
+  background: color-mix(in oklab, var(--text-tertiary) 56%, transparent);
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: color-mix(in oklab, var(--text-secondary) 64%, transparent);
+}
+
 html,
 body {
   margin: 0;
@@ -234,6 +267,17 @@ h4 {
   flex-wrap: wrap;
   align-items: center;
   gap: 8px;
+}
+
+.cycle-current-name {
+  display: none;
+  width: 100%;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .inline-form {
@@ -946,7 +990,9 @@ button:active {
 }
 
 .independent-section {
-  margin-top: 8px;
+  margin-top: 20px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--border-default);
 }
 
 .section-title {
@@ -1909,6 +1955,29 @@ button:active {
     grid-template-columns: 1fr;
   }
 
+  .work-top {
+    flex-wrap: wrap;
+    align-items: flex-start;
+  }
+
+  .work-top .work-status-select {
+    width: 100%;
+    min-width: 0;
+    max-width: 240px;
+  }
+
+  .goal-card header {
+    flex-wrap: wrap;
+    align-items: flex-start;
+  }
+
+  .goal-card header .badge {
+    width: fit-content;
+    flex-basis: 100%;
+    margin-top: 6px;
+    align-self: flex-start;
+  }
+
   .calendar-cell {
     min-height: 94px;
   }
@@ -1921,5 +1990,23 @@ button:active {
   .tab-bar button {
     padding: 9px 12px;
     font-size: 12px;
+  }
+}
+
+@media (max-width: 760px) {
+  .top-bar {
+    gap: 8px;
+    padding: 12px 14px;
+  }
+
+  .top-bar-head,
+  .cycle-selector .pretty-select,
+  .cycle-selector .inline-form,
+  .cycle-selector .folder-path {
+    display: none;
+  }
+
+  .cycle-current-name {
+    display: block;
   }
 }

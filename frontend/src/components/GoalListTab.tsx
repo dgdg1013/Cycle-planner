@@ -324,7 +324,7 @@ export function GoalListTab(props: GoalListTabProps) {
               checked={hideCompleted}
               onChange={(e) => onHideCompletedChange(e.target.checked)}
             />
-            Hide completed items
+            Hide Finished
           </label>
         </div>
       </div>

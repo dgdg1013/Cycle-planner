@@ -5,6 +5,7 @@ import { PrettySelect } from './PrettySelect';
 interface CycleSelectorProps {
   cycles: Cycle[];
   selectedCycleId?: string;
+  currentCycleName?: string;
   onSelect: (cycleId: string) => void;
   onCreate: (name: string) => void;
   parentDir: string;
@@ -15,6 +16,7 @@ interface CycleSelectorProps {
 export function CycleSelector({
   cycles,
   selectedCycleId,
+  currentCycleName,
   onSelect,
   onCreate,
   parentDir,
@@ -33,6 +35,9 @@ export function CycleSelector({
 
   return (
     <section className="cycle-selector">
+      <div className="cycle-current-name" title={currentCycleName || 'No Cycle selected'}>
+        {currentCycleName || 'No Cycle selected'}
+      </div>
       <PrettySelect
         className="cycle-select"
         value={selectedCycleId ?? ''}

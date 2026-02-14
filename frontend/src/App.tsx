@@ -64,6 +64,7 @@ export default function App() {
   const isDesktop = isDesktopRuntime();
 
   const selectedCycleId = index.selectedCycleId;
+  const selectedCycleName = index.cycles.find((cycle) => cycle.id === selectedCycleId)?.name;
 
   useEffect(() => {
     document.documentElement.dataset.theme = theme;
@@ -288,6 +289,7 @@ export default function App() {
         <CycleSelector
           cycles={index.cycles}
           selectedCycleId={selectedCycleId}
+          currentCycleName={selectedCycleName}
           onSelect={(cycleId) => void onSelectCycle(cycleId)}
           onCreate={(name) => void createCycleWithFolder(name)}
           parentDir={cycleParentDir}
