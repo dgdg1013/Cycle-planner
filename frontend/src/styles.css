@@ -779,8 +779,8 @@ button:active {
 }
 
 .work-card.status-not_started {
-  background: linear-gradient(180deg, #f2f4f8, #f7f8fb);
-  border-color: rgba(120, 132, 158, 0.32);
+  background: linear-gradient(180deg, #f1f1f1, #f8f8f8);
+  border-color: rgba(128, 128, 128, 0.26);
 }
 
 .work-card.status-in_progress {
