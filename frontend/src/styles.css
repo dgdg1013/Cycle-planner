@@ -303,6 +303,99 @@ select option:checked {
   background: color-mix(in oklab, var(--accent-bg) 78%, white);
 }
 
+.pretty-select {
+  position: relative;
+  min-width: 168px;
+}
+
+.pretty-select-trigger {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 7px 10px;
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+  background: linear-gradient(180deg, color-mix(in oklab, var(--bg-elevated) 96%, white), color-mix(in oklab, var(--bg-elevated-2) 75%, white));
+  color: var(--text-primary);
+  font-size: 13px;
+  text-align: left;
+  box-shadow: var(--shadow-xs);
+}
+
+.pretty-select-trigger:hover {
+  border-color: var(--border-strong);
+  background: color-mix(in oklab, var(--bg-elevated) 94%, white);
+}
+
+.pretty-select.open .pretty-select-trigger {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-bg), var(--shadow-xs);
+}
+
+.pretty-select-arrow {
+  color: var(--text-tertiary);
+  font-size: 12px;
+  line-height: 1;
+  transform: translateY(-1px);
+}
+
+.pretty-select.open .pretty-select-arrow {
+  transform: rotate(180deg) translateY(1px);
+}
+
+.pretty-select-list {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  z-index: 200;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 6px;
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+  background: color-mix(in oklab, var(--bg-elevated) 96%, white);
+  box-shadow: var(--shadow-md);
+}
+
+.pretty-select-item {
+  width: 100%;
+  text-align: left;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text-primary);
+  padding: 7px 8px;
+  font-size: 13px;
+}
+
+.pretty-select-item:hover {
+  border-color: var(--border-default);
+  background: var(--bg-hover);
+}
+
+.pretty-select-item.selected {
+  background: var(--accent-bg);
+  color: color-mix(in oklab, var(--accent) 85%, var(--text-primary));
+  font-weight: 600;
+}
+
+.cycle-select {
+  min-width: 220px;
+}
+
+.work-form-select {
+  min-width: 150px;
+}
+
+.work-status-select {
+  min-width: 140px;
+  max-width: 170px;
+}
+
 input::placeholder,
 textarea::placeholder {
   color: var(--text-placeholder);
@@ -1435,6 +1528,36 @@ button:active {
 
 :root[data-theme='dark'] select option:checked {
   background: color-mix(in oklab, var(--accent-bg) 38%, #2a313d);
+}
+
+:root[data-theme='dark'] .pretty-select-trigger {
+  background: linear-gradient(180deg, #2a313b, #252b34);
+  border-color: rgba(255, 255, 255, 0.2);
+  color: var(--text-primary);
+}
+
+:root[data-theme='dark'] .pretty-select-trigger:hover {
+  background: #313846;
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+:root[data-theme='dark'] .pretty-select-arrow {
+  color: #d2c8b7;
+}
+
+:root[data-theme='dark'] .pretty-select-list {
+  background: #242a33;
+  border-color: rgba(255, 255, 255, 0.18);
+}
+
+:root[data-theme='dark'] .pretty-select-item:hover {
+  border-color: rgba(255, 255, 255, 0.22);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+:root[data-theme='dark'] .pretty-select-item.selected {
+  background: rgba(111, 151, 242, 0.2);
+  color: #d9e6ff;
 }
 
 :root[data-theme='dark'] .todo-controls,

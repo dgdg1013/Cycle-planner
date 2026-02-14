@@ -1,5 +1,6 @@
 import { FormEvent, useState } from 'react';
 import { Cycle } from '../types/models';
+import { PrettySelect } from './PrettySelect';
 
 interface CycleSelectorProps {
   cycles: Cycle[];
@@ -32,15 +33,14 @@ export function CycleSelector({
 
   return (
     <section className="cycle-selector">
-      <select
+      <PrettySelect
+        className="cycle-select"
         value={selectedCycleId ?? ''}
-        onChange={(event) => onSelect(event.target.value)}
-      >
-        {cycles.length === 0 && <option value="">Create a Cycle first</option>}
-        {cycles.map((cycle) => (
-          <option key={cycle.id} value={cycle.id}>{cycle.name}</option>
-        ))}
-      </select>
+        onChange={onSelect}
+        options={cycles.length === 0
+          ? [{ value: '', label: 'Create a Cycle first' }]
+          : cycles.map((cycle) => ({ value: cycle.id, label: cycle.name }))}
+      />
       <form onSubmit={submit} className="inline-form">
         <input
           placeholder="New Cycle name"

@@ -1,6 +1,7 @@
 import { FormEvent, MouseEvent, useEffect, useMemo, useRef, useState } from 'react';
 import { Goal, Task, Work, WorkStatus } from '../types/models';
 import { computeGoalProgress, computeGoalStatus, GOAL_STATUS_LABEL, isCompletedGoal, WORK_STATUS_LABEL } from '../utils/model';
+import { PrettySelect } from './PrettySelect';
 import { WorkDetailPanel } from './WorkDetailPanel';
 
 interface GoalListTabProps {
@@ -244,15 +245,17 @@ export function GoalListTab(props: GoalListTabProps) {
       >
         <div className="work-top">
           <h4>{work.title}</h4>
-          <select
+          <PrettySelect
+            className="work-status-select"
             value={work.status}
-            onClick={(e) => e.stopPropagation()}
-            onChange={(e) => onChangeWorkStatus(work.id, e.target.value as WorkStatus)}
-          >
-            <option value="NOT_STARTED">Not started</option>
-            <option value="IN_PROGRESS">In progress</option>
-            <option value="DONE">Done</option>
-          </select>
+            onChange={(next) => onChangeWorkStatus(work.id, next as WorkStatus)}
+            onTriggerClick={(e) => e.stopPropagation()}
+            options={[
+              { value: 'NOT_STARTED', label: 'Not started' },
+              { value: 'IN_PROGRESS', label: 'In progress' },
+              { value: 'DONE', label: 'Done' }
+            ]}
+          />
         </div>
         <p>Status: {WORK_STATUS_LABEL[work.status]}</p>
         <p>Start date: {work.startDate || '-'}</p>
@@ -511,15 +514,16 @@ export function GoalListTab(props: GoalListTabProps) {
                             onChange={(e) => setNewWorkForm((p) => ({ ...p, title: e.target.value }))}
                             autoFocus
                           />
-                          <select
+                          <PrettySelect
                             className="work-form-select"
                             value={newWorkForm.status}
-                            onChange={(e) => setNewWorkForm((p) => ({ ...p, status: e.target.value as WorkStatus }))}
-                          >
-                            <option value="NOT_STARTED">Not started</option>
-                            <option value="IN_PROGRESS">In progress</option>
-                            <option value="DONE">Done</option>
-                          </select>
+                            onChange={(next) => setNewWorkForm((p) => ({ ...p, status: next as WorkStatus }))}
+                            options={[
+                              { value: 'NOT_STARTED', label: 'Not started' },
+                              { value: 'IN_PROGRESS', label: 'In progress' },
+                              { value: 'DONE', label: 'Done' }
+                            ]}
+                          />
                         </div>
                         <div className="work-form-dates">
                           <label className="work-form-field">
@@ -582,15 +586,16 @@ export function GoalListTab(props: GoalListTabProps) {
                     onChange={(e) => setNewWorkForm((p) => ({ ...p, title: e.target.value }))}
                     autoFocus
                   />
-                  <select
+                  <PrettySelect
                     className="work-form-select"
                     value={newWorkForm.status}
-                    onChange={(e) => setNewWorkForm((p) => ({ ...p, status: e.target.value as WorkStatus }))}
-                  >
-                    <option value="NOT_STARTED">Not started</option>
-                    <option value="IN_PROGRESS">In progress</option>
-                    <option value="DONE">Done</option>
-                  </select>
+                    onChange={(next) => setNewWorkForm((p) => ({ ...p, status: next as WorkStatus }))}
+                    options={[
+                      { value: 'NOT_STARTED', label: 'Not started' },
+                      { value: 'IN_PROGRESS', label: 'In progress' },
+                      { value: 'DONE', label: 'Done' }
+                    ]}
+                  />
                 </div>
                 <div className="work-form-dates">
                   <label className="work-form-field">

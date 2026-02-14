@@ -1,5 +1,6 @@
 import { FormEvent, useEffect, useRef, useState } from 'react';
 import { Task, Work, WorkStatus } from '../types/models';
+import { PrettySelect } from './PrettySelect';
 
 interface WorkDetailPanelProps {
   work: Work;
@@ -95,17 +96,16 @@ export function WorkDetailPanel({
 
         <div className="work-detail-field">
           <span>Status</span>
-          <select
+          <PrettySelect
+            className="work-status-select"
             value={work.status}
-            onChange={(e) => {
-              const status = e.target.value as WorkStatus;
-              onChangeWorkStatus(work.id, status);
-            }}
-          >
-            <option value="NOT_STARTED">Not started</option>
-            <option value="IN_PROGRESS">In progress</option>
-            <option value="DONE">Done</option>
-          </select>
+            onChange={(next) => onChangeWorkStatus(work.id, next as WorkStatus)}
+            options={[
+              { value: 'NOT_STARTED', label: 'Not started' },
+              { value: 'IN_PROGRESS', label: 'In progress' },
+              { value: 'DONE', label: 'Done' }
+            ]}
+          />
         </div>
 
         <div className="work-detail-field">
