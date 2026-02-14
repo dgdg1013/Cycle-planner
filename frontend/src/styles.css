@@ -1184,6 +1184,55 @@ button:active {
   background: var(--bg-hover);
 }
 
+.table-grid-picker {
+  position: relative;
+}
+
+.table-grid-popover {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  z-index: 260;
+  min-width: 176px;
+  padding: 8px;
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+  background: color-mix(in oklab, var(--bg-elevated) 96%, white);
+  box-shadow: var(--shadow-md);
+}
+
+.table-grid-popover p {
+  margin: 0 0 7px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.table-grid-matrix {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.table-grid-row {
+  display: flex;
+  gap: 2px;
+}
+
+.table-grid-cell {
+  width: 14px;
+  height: 14px;
+  padding: 0;
+  border: 1px solid var(--border-default);
+  border-radius: 2px;
+  background: color-mix(in oklab, var(--bg-elevated-2) 82%, white);
+}
+
+.table-grid-cell.active {
+  border-color: color-mix(in oklab, var(--accent) 52%, transparent);
+  background: color-mix(in oklab, var(--accent-bg) 70%, white);
+}
+
 .rich-editor-wrap .work-form-actions {
   margin-top: 12px;
   padding-top: 10px;
@@ -1562,6 +1611,21 @@ button:active {
 :root[data-theme='dark'] .pretty-select-item.selected {
   background: rgba(111, 151, 242, 0.2);
   color: #d9e6ff;
+}
+
+:root[data-theme='dark'] .table-grid-popover {
+  background: #242a33;
+  border-color: rgba(255, 255, 255, 0.18);
+}
+
+:root[data-theme='dark'] .table-grid-cell {
+  background: #2d3440;
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+:root[data-theme='dark'] .table-grid-cell.active {
+  background: rgba(111, 151, 242, 0.22);
+  border-color: rgba(111, 151, 242, 0.45);
 }
 
 :root[data-theme='dark'] .todo-controls,

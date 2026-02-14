@@ -2,6 +2,7 @@ import { FormEvent, MouseEvent, useEffect, useMemo, useRef, useState } from 'rea
 import { Goal, Task, Work, WorkStatus } from '../types/models';
 import { computeGoalProgress, computeGoalStatus, GOAL_STATUS_LABEL, isCompletedGoal, WORK_STATUS_LABEL } from '../utils/model';
 import { PrettySelect } from './PrettySelect';
+import { TableGridPicker } from './TableGridPicker';
 import { WorkDetailPanel } from './WorkDetailPanel';
 
 interface GoalListTabProps {
@@ -119,12 +120,7 @@ export function GoalListTab(props: GoalListTabProps) {
     execNewWorkEditor('insertImage', src);
   };
 
-  const insertNewWorkTable = () => {
-    const rowInput = window.prompt('Rows', '2');
-    const colInput = window.prompt('Columns', '2');
-    const rows = Number(rowInput);
-    const cols = Number(colInput);
-    if (!Number.isInteger(rows) || !Number.isInteger(cols) || rows <= 0 || cols <= 0) return;
+  const insertNewWorkTable = (rows: number, cols: number) => {
     const bodyRows = Array.from({ length: rows })
       .map(() => `<tr>${Array.from({ length: cols }).map(() => '<td>&nbsp;</td>').join('')}</tr>`)
       .join('');
@@ -545,7 +541,7 @@ export function GoalListTab(props: GoalListTabProps) {
                               <button type="button" onClick={() => execNewWorkEditor('insertUnorderedList')}>• List</button>
                               <button type="button" onClick={() => execNewWorkEditor('insertOrderedList')}>1. List</button>
                               <button type="button" onClick={insertNewWorkImage}>Image</button>
-                              <button type="button" onClick={insertNewWorkTable}>Table</button>
+                              <TableGridPicker onPick={insertNewWorkTable} />
                             </div>
                             <div
                               ref={newWorkBodyEditorRef}
@@ -617,7 +613,7 @@ export function GoalListTab(props: GoalListTabProps) {
                       <button type="button" onClick={() => execNewWorkEditor('insertUnorderedList')}>• List</button>
                       <button type="button" onClick={() => execNewWorkEditor('insertOrderedList')}>1. List</button>
                       <button type="button" onClick={insertNewWorkImage}>Image</button>
-                      <button type="button" onClick={insertNewWorkTable}>Table</button>
+                      <TableGridPicker onPick={insertNewWorkTable} />
                     </div>
                     <div
                       ref={newWorkBodyEditorRef}

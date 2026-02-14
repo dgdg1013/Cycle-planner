@@ -1,6 +1,7 @@
 import { FormEvent, useEffect, useRef, useState } from 'react';
 import { Task, Work, WorkStatus } from '../types/models';
 import { PrettySelect } from './PrettySelect';
+import { TableGridPicker } from './TableGridPicker';
 
 interface WorkDetailPanelProps {
   work: Work;
@@ -49,13 +50,7 @@ export function WorkDetailPanel({
     exec('insertImage', src);
   };
 
-  const insertTable = () => {
-    const rowInput = window.prompt('Rows', '2');
-    const colInput = window.prompt('Columns', '2');
-    const rows = Number(rowInput);
-    const cols = Number(colInput);
-    if (!Number.isInteger(rows) || !Number.isInteger(cols) || rows <= 0 || cols <= 0) return;
-
+  const insertTable = (rows: number, cols: number) => {
     const bodyRows = Array.from({ length: rows })
       .map(() => `<tr>${Array.from({ length: cols }).map(() => '<td>&nbsp;</td>').join('')}</tr>`)
       .join('');
@@ -152,7 +147,7 @@ export function WorkDetailPanel({
               <button type="button" onClick={() => exec('insertUnorderedList')}>• List</button>
               <button type="button" onClick={() => exec('insertOrderedList')}>1. List</button>
               <button type="button" onClick={insertImage}>Image</button>
-              <button type="button" onClick={insertTable}>Table</button>
+              <TableGridPicker onPick={insertTable} />
             </div>
             <div
               ref={editorRef}
