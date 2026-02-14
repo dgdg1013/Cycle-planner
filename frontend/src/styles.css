@@ -840,6 +840,14 @@ button:active {
   margin-top: 8px;
 }
 
+.task-list-card {
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+  background: #fffdf9;
+  padding: 8px;
+  box-shadow: var(--shadow-xs);
+}
+
 .task-item {
   position: relative;
   display: flex;
@@ -1388,6 +1396,11 @@ button:active {
 
 :root[data-theme='dark'] .todo-task-row {
   background: #2a313d;
+}
+
+:root[data-theme='dark'] .task-list-card {
+  background: #262d37;
+  border-color: rgba(255, 255, 255, 0.18);
 }
 
 :root[data-theme='dark'] .todo-task-row:hover {

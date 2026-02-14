@@ -264,7 +264,7 @@ export function GoalListTab(props: GoalListTabProps) {
           </button>
         </div>
         {isTaskOpen && (
-          <div className="task-list">
+          <div className="task-list task-list-card">
             {workTasks.map((task) => (
               <TaskDisplay
                 key={task.id}
@@ -394,6 +394,18 @@ export function GoalListTab(props: GoalListTabProps) {
             onClick={(e) => e.stopPropagation()}
             role="menu"
           >
+            {contextMenuTarget.kind === 'goal' && (
+              <button
+                type="button"
+                className="context-menu-item"
+                onClick={() => {
+                  openAddWorkForGoal(contextMenuTarget.id);
+                  setContextMenuTarget(null);
+                }}
+              >
+                [{contextMenuTarget.title}] Work 생성
+              </button>
+            )}
             <button
               type="button"
               className="context-menu-item danger"
@@ -435,9 +447,6 @@ export function GoalListTab(props: GoalListTabProps) {
                       <h3>{goal.title}</h3>
                       <span className={`badge ${status.toLowerCase()}`}>{GOAL_STATUS_LABEL[status]}</span>
                     </header>
-                    <button type="button" className="btn-add-work" onClick={() => openAddWorkForGoal(goal.id)}>
-                      Work 생성
-                    </button>
                   </div>
                   <div className="goal-progress" aria-label={`진행률 ${progress}%`}>
                     <div className="goal-progress-bar" style={{ width: `${progress}%` }} />
