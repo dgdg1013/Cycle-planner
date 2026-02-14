@@ -393,6 +393,21 @@ button:active {
   transition: border-color var(--transition), box-shadow var(--transition), transform var(--transition);
 }
 
+.work-card.status-not_started {
+  background: linear-gradient(180deg, #f3eee6, #f8f4ec);
+  border-color: rgba(132, 114, 90, 0.3);
+}
+
+.work-card.status-in_progress {
+  background: linear-gradient(180deg, #e6eefc, #edf3ff);
+  border-color: rgba(49, 94, 184, 0.34);
+}
+
+.work-card.status-done {
+  background: linear-gradient(180deg, #e6f2e7, #edf8ee);
+  border-color: rgba(36, 129, 71, 0.3);
+}
+
 .work-card:hover {
   transform: translateY(-1px);
   box-shadow: var(--shadow-sm);
