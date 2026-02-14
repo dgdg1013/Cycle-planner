@@ -1,8 +1,8 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "Cycle Planner",
+  "productName": "Cycle",
   "version": "0.1.0",
-  "identifier": "com.local.cycleplanner",
+  "identifier": "com.local.cycle",
   "build": {
     "frontendDist": "../dist",
     "devUrl": "http://localhost:5173",
@@ -12,7 +12,7 @@
   "app": {
     "windows": [
       {
-        "title": "Cycle Planner",
+        "title": "Cycle",
         "width": 1320,
         "height": 860,
         "resizable": true

@@ -1,43 +1,42 @@
-# Cycle Planner
+# Cycle
 
-웹 기반 UI를 사용하지만, 로컬 데스크탑 앱(Tauri)으로 실행할 수 있습니다.
+웹과 데스크탑(Tauri) 둘 다 실행 가능한 일정 관리 앱입니다.
 
-## 데스크탑 앱 실행 (권장)
+## 데스크탑 앱 (아이콘 더블클릭 실행)
 
 사전 준비:
 - Node.js 18+
-- Rust (stable) 설치
-- OS별 Tauri 빌드 의존성 설치
+- Rust (stable)
+- OS별 Tauri 빌드 의존성
 
-실행:
-
-```bash
-# repo root
-./run-desktop.sh
-```
+### 1) 데스크탑 앱 빌드
 
 Windows:
-
 ```bat
-run-desktop.bat
+build-desktop.bat
 ```
 
-직접 실행:
-
+Linux/macOS:
 ```bash
-cd frontend
-npm install
-npm run desktop:dev
+./build-desktop.sh
 ```
 
-배포용 앱 빌드:
+빌드 결과:
+- 실행 파일: `frontend/src-tauri/target/release/`
+- 설치 파일(아이콘 기반 설치): `frontend/src-tauri/target/release/bundle/`
 
+### 2) 더블클릭 실행
+
+Windows:
+- `launch-desktop.bat` 더블클릭
+- (실행 파일이 없으면 자동 빌드 후 실행 시도)
+
+Linux/macOS:
 ```bash
-cd frontend
-npm run desktop:build
+./launch-desktop.sh
 ```
 
-## 웹으로 실행
+## 웹 실행 (기존 유지)
 
 ```bash
 cd frontend
