@@ -314,7 +314,7 @@ export function GoalListTab(props: GoalListTabProps) {
     <section className="tab-panel">
       <div className="panel-controls">
         <div className="panel-controls-left">
-          <button type="button" className="btn btn-primary" onClick={() => setGoalModalOpen(true)}>
+          <button type="button" className="btn btn-primary btn-goal-create" onClick={() => setGoalModalOpen(true)}>
             Goal 생성
           </button>
         </div>
