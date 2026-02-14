@@ -218,7 +218,7 @@ export function GoalListTab(props: GoalListTabProps) {
       <div
         key={work.id}
         className={`work-card status-${work.status.toLowerCase()} ${selectedWorkId === work.id ? 'selected' : ''}`}
-        onClick={() => setSelectedWorkId(work.id)}
+        onClick={() => setSelectedWorkId((prev) => (prev === work.id ? null : work.id))}
         onContextMenu={(e) => {
           e.preventDefault();
           e.stopPropagation();
