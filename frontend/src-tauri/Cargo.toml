@@ -1,0 +1,20 @@
+[package]
+name = "cycle-planner"
+version = "0.1.0"
+description = "Cycle Planner Desktop"
+authors = ["cycle-planner"]
+edition = "2021"
+
+[lib]
+name = "cycle_planner_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+tauri = { version = "2", features = [] }
+rfd = "0.15"
+rand = "0.8"

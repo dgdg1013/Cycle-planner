@@ -1,0 +1,267 @@
+import { AppIndex, CycleData } from '../types/models';
+
+const INDEX_KEY = 'cycle_planner_index_v3';
+const CYCLE_FILE = 'cycle_data.json';
+const HANDLE_DB = 'cycle_planner_handles';
+const HANDLE_STORE = 'handles';
+
+const emptyIndex: AppIndex = {
+  cycles: [],
+  selectedCycleId: undefined
+};
+
+let selectedParentHandle: FileSystemDirectoryHandle | null = null;
+let selectedParentLabel = '';
+
+function cycleKey(cycleId: string): string {
+  return `cycle_planner_cycle_${cycleId}`;
+}
+
+function supportsFsApi(): boolean {
+  return typeof window !== 'undefined' && 'showDirectoryPicker' in window;
+}
+
+function uid(prefix: string): string {
+  return `${prefix}_${crypto.randomUUID()}`;
+}
+
+function sanitizeFolderName(name: string): string {
+  const cleaned = name.replace(/[^a-zA-Z0-9_-]/g, '_').replace(/^_+|_+$/g, '');
+  return cleaned || 'cycle';
+}
+
+function openHandleDb(): Promise<IDBDatabase> {
+  return new Promise((resolve, reject) => {
+    const request = indexedDB.open(HANDLE_DB, 1);
+
+    request.onupgradeneeded = () => {
+      const db = request.result;
+      if (!db.objectStoreNames.contains(HANDLE_STORE)) {
+        db.createObjectStore(HANDLE_STORE);
+      }
+    };
+
+    request.onsuccess = () => resolve(request.result);
+    request.onerror = () => reject(request.error);
+  });
+}
+
+async function setCycleHandle(cycleId: string, handle: FileSystemDirectoryHandle): Promise<void> {
+  const db = await openHandleDb();
+  await new Promise<void>((resolve, reject) => {
+    const tx = db.transaction(HANDLE_STORE, 'readwrite');
+    tx.objectStore(HANDLE_STORE).put(handle, cycleId);
+    tx.oncomplete = () => resolve();
+    tx.onerror = () => reject(tx.error);
+  });
+  db.close();
+}
+
+async function getCycleHandle(cycleId: string): Promise<FileSystemDirectoryHandle | null> {
+  const db = await openHandleDb();
+  const result = await new Promise<FileSystemDirectoryHandle | null>((resolve, reject) => {
+    const tx = db.transaction(HANDLE_STORE, 'readonly');
+    const req = tx.objectStore(HANDLE_STORE).get(cycleId);
+    req.onsuccess = () => resolve((req.result as FileSystemDirectoryHandle) ?? null);
+    req.onerror = () => reject(req.error);
+  });
+  db.close();
+  return result;
+}
+
+async function ensureReadWritePermission(handle: FileSystemDirectoryHandle): Promise<boolean> {
+  const read = await handle.queryPermission({ mode: 'readwrite' });
+  if (read === 'granted') return true;
+  const requested = await handle.requestPermission({ mode: 'readwrite' });
+  return requested === 'granted';
+}
+
+async function writeCycleFile(handle: FileSystemDirectoryHandle, data: CycleData): Promise<void> {
+  const fileHandle = await handle.getFileHandle(CYCLE_FILE, { create: true });
+  const writable = await fileHandle.createWritable();
+  await writable.write(JSON.stringify(data, null, 2));
+  await writable.close();
+}
+
+async function readCycleFile(handle: FileSystemDirectoryHandle): Promise<CycleData> {
+  const fileHandle = await handle.getFileHandle(CYCLE_FILE);
+  const file = await fileHandle.getFile();
+  const text = await file.text();
+  return JSON.parse(text) as CycleData;
+}
+
+export async function pickFolder(): Promise<string | null> {
+  if (!supportsFsApi()) {
+    throw new Error('이 브라우저는 폴더 선택 API를 지원하지 않습니다. Chrome/Edge 최신 버전을 사용하세요.');
+  }
+
+  const handle = await window.showDirectoryPicker();
+  selectedParentHandle = handle;
+  selectedParentLabel = handle.name;
+  return handle.name;
+}
+
+export async function loadIndex(): Promise<AppIndex> {
+  const raw = localStorage.getItem(INDEX_KEY);
+  if (!raw) return emptyIndex;
+
+  try {
+    return JSON.parse(raw) as AppIndex;
+  } catch {
+    return emptyIndex;
+  }
+}
+
+export async function selectCycle(cycleId: string): Promise<AppIndex> {
+  const index = await loadIndex();
+  const selected = index.cycles.find((cycle) => cycle.id === cycleId);
+  const next = { ...index, selectedCycleId: cycleId };
+  localStorage.setItem(INDEX_KEY, JSON.stringify(next));
+
+  if (selected?.folderPath) {
+    selectedParentLabel = selected.folderPath;
+  }
+  return next;
+}
+
+export async function createCycle(name: string, _parentDir: string): Promise<AppIndex> {
+  if (!selectedParentHandle) {
+    throw new Error('먼저 저장 폴더를 선택하세요.');
+  }
+
+  const hasPermission = await ensureReadWritePermission(selectedParentHandle);
+  if (!hasPermission) {
+    throw new Error('선택한 폴더에 대한 읽기/쓰기 권한이 필요합니다.');
+  }
+
+  const index = await loadIndex();
+  const cycleId = uid('cycle');
+  const suffix = cycleId.slice(-6);
+  const folderName = `${sanitizeFolderName(name)}_${suffix}`;
+  const cycleFolder = await selectedParentHandle.getDirectoryHandle(folderName, { create: true });
+
+  const createdAt = new Date().toISOString();
+  const data: CycleData = {
+    id: cycleId,
+    name,
+    createdAt,
+    goals: [],
+    works: [],
+    tasks: []
+  };
+
+  await writeCycleFile(cycleFolder, data);
+  await setCycleHandle(cycleId, cycleFolder);
+
+  const next: AppIndex = {
+    cycles: [...index.cycles, { id: cycleId, name, createdAt, folderPath: `${selectedParentHandle.name}/${folderName}` }],
+    selectedCycleId: index.selectedCycleId ?? cycleId
+  };
+
+  localStorage.setItem(INDEX_KEY, JSON.stringify(next));
+  return next;
+}
+
+export async function importCycle(_folderPath: string): Promise<AppIndex> {
+  if (!supportsFsApi()) {
+    throw new Error('이 브라우저는 폴더 선택 API를 지원하지 않습니다.');
+  }
+
+  const folder = await window.showDirectoryPicker();
+  const hasPermission = await ensureReadWritePermission(folder);
+  if (!hasPermission) {
+    throw new Error('폴더 읽기/쓰기 권한이 필요합니다.');
+  }
+
+  const data = await readCycleFile(folder);
+  const cycleId = data.id || uid('cycle');
+  const cycleName = data.name || folder.name;
+  const createdAt = data.createdAt || new Date().toISOString();
+
+  const normalized: CycleData = {
+    id: cycleId,
+    name: cycleName,
+    createdAt,
+    goals: data.goals ?? [],
+    works: data.works ?? [],
+    tasks: data.tasks ?? []
+  };
+
+  await writeCycleFile(folder, normalized);
+  await setCycleHandle(cycleId, folder);
+
+  const index = await loadIndex();
+  const existing = index.cycles.find((cycle) => cycle.id === cycleId);
+  let cycles = index.cycles;
+
+  if (existing) {
+    cycles = index.cycles.map((cycle) => (
+      cycle.id === cycleId
+        ? { ...cycle, name: cycleName, createdAt, folderPath: folder.name }
+        : cycle
+    ));
+  } else {
+    cycles = [...index.cycles, { id: cycleId, name: cycleName, createdAt, folderPath: folder.name }];
+  }
+
+  const next: AppIndex = {
+    cycles,
+    selectedCycleId: cycleId
+  };
+
+  localStorage.setItem(INDEX_KEY, JSON.stringify(next));
+  selectedParentLabel = folder.name;
+  return next;
+}
+
+export async function loadCycleData(cycleId: string): Promise<CycleData> {
+  const index = await loadIndex();
+  const cycleMeta = index.cycles.find((cycle) => cycle.id === cycleId);
+
+  const handle = await getCycleHandle(cycleId);
+  if (handle) {
+    const perm = await ensureReadWritePermission(handle);
+    if (perm) {
+      const data = await readCycleFile(handle);
+      return {
+        id: cycleId,
+        name: cycleMeta?.name ?? data.name,
+        createdAt: cycleMeta?.createdAt ?? data.createdAt,
+        goals: data.goals ?? [],
+        works: data.works ?? [],
+        tasks: data.tasks ?? []
+      };
+    }
+  }
+
+  const raw = localStorage.getItem(cycleKey(cycleId));
+  if (raw) {
+    return JSON.parse(raw) as CycleData;
+  }
+
+  return {
+    id: cycleId,
+    name: cycleMeta?.name ?? 'Cycle',
+    createdAt: cycleMeta?.createdAt ?? new Date().toISOString(),
+    goals: [],
+    works: [],
+    tasks: []
+  };
+}
+
+export async function saveCycleData(cycleId: string, data: CycleData): Promise<void> {
+  const handle = await getCycleHandle(cycleId);
+  if (handle) {
+    const perm = await ensureReadWritePermission(handle);
+    if (perm) {
+      await writeCycleFile(handle, data);
+      return;
+    }
+  }
+
+  localStorage.setItem(cycleKey(cycleId), JSON.stringify(data));
+}
+
+export function getSelectedFolderLabel(): string {
+  return selectedParentLabel;
+}

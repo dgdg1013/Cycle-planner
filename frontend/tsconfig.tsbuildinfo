@@ -1,0 +1,1 @@
+{"root":["./src/App.tsx","./src/main.tsx","./src/components/CalendarTab.tsx","./src/components/CycleSelector.tsx","./src/components/GoalListTab.tsx","./src/components/TabBar.tsx","./src/components/TodoTab.tsx","./src/components/WorkDetailPanel.tsx","./src/types/models.ts","./src/utils/model.ts","./src/utils/storage.ts"],"errors":true,"version":"5.9.3"}
