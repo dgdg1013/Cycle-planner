@@ -146,7 +146,12 @@ fn main_window(app: &tauri::AppHandle) -> Result<tauri::WebviewWindow, String> {
 
 #[tauri::command]
 fn pick_folder() -> Option<String> {
-    FileDialog::new().pick_folder().map(|p| p.to_string_lossy().to_string())
+    FileDialog::new().pick_folder().map(|p| {
+        fs::canonicalize(&p)
+            .unwrap_or(p)
+            .to_string_lossy()
+            .to_string()
+    })
 }
 
 #[tauri::command]

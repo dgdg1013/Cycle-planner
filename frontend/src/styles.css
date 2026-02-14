@@ -254,6 +254,8 @@ h4 {
   margin-top: 2px;
   font-size: 12px;
   color: var(--text-tertiary);
+  overflow-wrap: anywhere;
+  font-family: 'IBM Plex Sans KR', 'Plus Jakarta Sans', sans-serif;
 }
 
 input,
