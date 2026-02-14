@@ -33,6 +33,11 @@ function normalizeCycleData(cycleId: string, cycleData: CycleData): CycleData {
 }
 
 export default function App() {
+  const [theme, setTheme] = useState<'light' | 'dark'>(() => {
+    const saved = window.localStorage.getItem('theme');
+    if (saved === 'light' || saved === 'dark') return saved;
+    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  });
   const [index, setIndex] = useState<AppIndex>(emptyIndex);
   const [cycleData, setCycleData] = useState<CycleData>(emptyCycleData);
   const [tab, setTab] = useState<'goals' | 'calendar' | 'todo'>('goals');
@@ -42,6 +47,11 @@ export default function App() {
   const [loading, setLoading] = useState(true);
 
   const selectedCycleId = index.selectedCycleId;
+
+  useEffect(() => {
+    document.documentElement.dataset.theme = theme;
+    window.localStorage.setItem('theme', theme);
+  }, [theme]);
 
   useEffect(() => {
     const bootstrap = async () => {
@@ -211,7 +221,18 @@ export default function App() {
   return (
     <div className="app-shell">
       <header className="top-bar">
-        <h1>Cycle Planner</h1>
+        <div className="top-bar-head">
+          <h1>Cycle</h1>
+          <button
+            type="button"
+            className="theme-toggle"
+            onClick={() => setTheme((prev) => (prev === 'light' ? 'dark' : 'light'))}
+            aria-label="테마 전환"
+            title="라이트/다크 모드 전환"
+          >
+            {theme === 'light' ? 'Dark' : 'Light'}
+          </button>
+        </div>
         <CycleSelector
           cycles={index.cycles}
           selectedCycleId={selectedCycleId}

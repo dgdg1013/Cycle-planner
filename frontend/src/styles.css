@@ -47,6 +47,40 @@
   --transition: 180ms cubic-bezier(0.2, 0.7, 0.2, 1);
 }
 
+:root[data-theme='dark'] {
+  --bg-page: #171a1f;
+  --bg-pattern: radial-gradient(circle at 16% 12%, rgba(88, 111, 158, 0.18), transparent 42%), radial-gradient(circle at 82% 8%, rgba(109, 90, 72, 0.16), transparent 34%), linear-gradient(180deg, #1b2027 0%, #171a1f 56%, #14171b 100%);
+  --bg-elevated: #21262e;
+  --bg-elevated-2: #252b35;
+  --bg-hover: rgba(255, 255, 255, 0.08);
+  --bg-active: rgba(255, 255, 255, 0.13);
+
+  --text-primary: #ece6db;
+  --text-secondary: #c1b8a7;
+  --text-tertiary: #9a917f;
+  --text-placeholder: #7e776b;
+
+  --border-default: rgba(255, 255, 255, 0.16);
+  --border-strong: rgba(255, 255, 255, 0.28);
+  --border-focus: rgba(98, 143, 235, 0.42);
+
+  --accent: #6f97f2;
+  --accent-hover: #5e86dd;
+  --accent-bg: rgba(111, 151, 242, 0.2);
+  --accent-bg-hover: rgba(111, 151, 242, 0.28);
+
+  --goal-card-bg: #2f3138;
+  --goal-card-border: rgba(145, 151, 168, 0.28);
+
+  --status-not-started: #3a3f48;
+  --status-in-progress: #2e3f66;
+  --status-done: #284838;
+  --status-done-text: #9ed8b1;
+
+  --danger: #e2645f;
+  --danger-hover: #f07d78;
+}
+
 * {
   box-sizing: border-box;
 }
@@ -96,11 +130,40 @@ h4 {
   gap: 14px;
 }
 
+.top-bar-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+
 .top-bar h1 {
   margin: 0;
   font-size: clamp(1.3rem, 1.8vw, 1.9rem);
   font-weight: 700;
   color: #2a251f;
+}
+
+:root[data-theme='dark'] .top-bar h1 {
+  color: #f0ebe1;
+}
+
+.theme-toggle {
+  padding: 5px 10px;
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-full);
+  background: color-mix(in oklab, var(--bg-elevated) 90%, transparent);
+  color: var(--text-secondary);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+.theme-toggle:hover {
+  border-color: var(--border-strong);
+  background: var(--bg-hover);
+  color: var(--text-primary);
 }
 
 .cycle-selector {
@@ -1101,6 +1164,29 @@ button:active {
     opacity: 1;
     transform: translateY(0) scale(1);
   }
+}
+
+:root[data-theme='dark'] input,
+:root[data-theme='dark'] select,
+:root[data-theme='dark'] textarea,
+:root[data-theme='dark'] .rich-editor,
+:root[data-theme='dark'] .rich-output,
+:root[data-theme='dark'] .rich-toolbar button,
+:root[data-theme='dark'] .calendar-nav button,
+:root[data-theme='dark'] .tab-bar button,
+:root[data-theme='dark'] .modal-box,
+:root[data-theme='dark'] .context-menu,
+:root[data-theme='dark'] .cycle-caption {
+  background: #242a33;
+  color: var(--text-primary);
+}
+
+:root[data-theme='dark'] .tab-bar button.active,
+:root[data-theme='dark'] .btn-primary,
+:root[data-theme='dark'] .btn-submit,
+:root[data-theme='dark'] .btn-add-work {
+  background: var(--accent);
+  color: #f7f9ff;
 }
 
 @media (max-width: 960px) {
