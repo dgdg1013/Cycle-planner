@@ -449,8 +449,13 @@ select option:checked {
 }
 
 .work-status-select {
-  min-width: 140px;
-  max-width: 170px;
+  min-width: 120px;
+  max-width: 150px;
+}
+
+.work-status-select .pretty-select-trigger {
+  padding: 5px 9px;
+  font-size: 12px;
 }
 
 input::placeholder,
@@ -1937,9 +1942,12 @@ button:active {
 
   .goal-detail-layout {
     flex-direction: column;
+    align-items: stretch;
   }
 
+  .goal-detail-main,
   .goal-detail-layout.detail-open .goal-detail-main {
+    width: 100%;
     max-width: 100%;
     transform: none;
   }
@@ -1961,9 +1969,9 @@ button:active {
   }
 
   .work-top .work-status-select {
-    width: 100%;
-    min-width: 0;
-    max-width: 240px;
+    width: auto;
+    min-width: 120px;
+    max-width: 150px;
   }
 
   .goal-card header {
