@@ -170,6 +170,37 @@ h4 {
   height: 100%;
 }
 
+.window-left-actions {
+  display: flex;
+  align-self: flex-start;
+  margin-right: 8px;
+}
+
+.window-postit-btn {
+  height: 24px;
+  padding: 0 10px;
+  border: 1px solid var(--border-default);
+  border-radius: 999px;
+  background: color-mix(in oklab, var(--bg-elevated) 90%, white);
+  color: var(--text-secondary);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.window-postit-btn:hover {
+  border-color: var(--border-strong);
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+.window-postit-btn.active {
+  border-color: color-mix(in oklab, var(--accent) 28%, var(--border-default));
+  background: color-mix(in oklab, var(--accent-bg) 75%, white);
+  color: color-mix(in oklab, var(--accent) 82%, var(--text-primary));
+}
+
 .window-controls {
   display: flex;
   gap: 2px;
@@ -2016,5 +2047,239 @@ button:active {
 
   .cycle-current-name {
     display: block;
+  }
+}
+
+/* Compact mode overrides */
+body { font-size: 12px; }
+h1 { font-size: 1.2rem; }
+h2 { font-size: 1.05rem; }
+h3 { font-size: 0.92rem; }
+h4 { font-size: 0.86rem; }
+
+.app-shell { max-width: 980px; padding: 8px 10px 66px; }
+.desktop-shell { padding-top: 34px; }
+.window-chrome { height: 26px; }
+.window-postit-btn,
+.window-control-btn { height: 20px; }
+.window-control-btn { width: 24px; }
+.top-bar { margin-bottom: 7px; padding: 6px 7px; gap: 5px; }
+.cycle-current-name { min-height: 24px; padding: 3px 6px; font-size: 11px; }
+.top-bar h1 { font-size: 1.2rem; }
+.top-bar-head { gap: 6px; }
+.theme-toggle { padding: 2px 8px; font-size: 10px; }
+.cycle-selector { gap: 6px; }
+.inline-form { gap: 6px; }
+.cycle-selector button,
+.inline-form button { padding: 2px 8px; font-size: 10px; }
+.folder-path { margin-top: 0; font-size: 10px; }
+
+input,
+select,
+textarea,
+button { font-size: 11px; }
+input,
+select,
+textarea { min-height: 24px; padding: 2px 6px; }
+.pretty-select-trigger { min-height: 24px; padding: 2px 6px; font-size: 11px; }
+
+.tab-panel { gap: 8px; }
+.panel-controls { margin-bottom: 4px; }
+.card,
+.goal-card,
+.work-card,
+.todo-work-card { padding: 7px 8px; }
+.modal-box { max-width: 390px; padding: 9px; }
+.tab-bar { padding: 6px 8px 10px; }
+.tab-bar button { min-height: 24px; padding: 2px 8px; font-size: 10px; }
+
+/* To-Do */
+.todo-tab { gap: 5px; }
+.todo-controls { padding: 5px 7px; }
+.todo-overview { font-size: 11px; }
+.todo-overview strong { font-size: 12px; }
+.todo-work-grid { gap: 7px; }
+.todo-work-card { padding: 6px 7px; }
+.todo-work-header { margin-bottom: 4px; }
+.todo-work-header h3 { font-size: 12px; }
+.todo-count { min-width: 18px; height: 18px; padding: 0 5px; font-size: 10px; }
+.todo-task-list { gap: 3px; }
+.todo-task-row { grid-template-columns: 14px 1fr auto; gap: 5px; padding: 3px 5px; }
+.todo-task-title { font-size: 11px; }
+.todo-task-date { font-size: 9px; padding: 1px 4px; }
+.todo-empty { padding: 8px; font-size: 11px; }
+
+/* Goal/Work/Status scale */
+.goal-list { gap: 10px; }
+.content,
+.tab-panel,
+.goal-detail-layout { width: 100%; }
+.goal-detail-layout.detail-open .goal-detail-main {
+  max-width: none;
+  transform: none;
+}
+.goal-card-header-row { gap: 6px; margin-bottom: 5px; }
+.goal-card header h3,
+.work-top h4 { font-size: 12px; }
+.goal-card p,
+.work-card p { margin-top: 3px; font-size: 11px; line-height: 1.28; }
+.date-meta { gap: 5px; }
+.date-meta-label { min-width: 58px; font-size: 10px; }
+.goal-progress { margin-top: 5px; height: 12px; }
+.goal-progress-text { font-size: 9px; }
+.badge { padding: 2px 7px; font-size: 9px; }
+.work-list,
+.work-cards { margin-top: 8px; gap: 7px; }
+.work-top { gap: 7px; }
+.work-status-select { min-width: 102px; max-width: 118px; }
+.work-status-select .pretty-select-trigger { min-height: 22px; padding: 1px 6px; font-size: 10px; }
+.work-card .task-row { gap: 5px; margin-top: 4px; }
+.work-card .btn-text { padding: 2px 6px; font-size: 10px; }
+.btn-add-task { width: 18px; height: 18px; }
+.plus-symbol { font-size: 10px; }
+
+/* Goal list tasks */
+.task-list-card { padding: 4px; }
+.task-list-card .task-item { gap: 5px; padding: 2px 18px 2px 4px; min-height: 18px; }
+.task-list-card .task-item span { font-size: 10px; line-height: 1.2; }
+.task-list-card .task-item input[type='checkbox'] { width: 11px; height: 11px; min-height: 0; margin: 0; padding: 0; }
+.task-list-card .btn-delete-card { right: 5px; bottom: 4px; font-size: 11px; }
+
+/* Work status dropdown */
+.work-status-select .pretty-select-list { top: calc(100% + 3px); padding: 3px; gap: 1px; }
+.work-status-select .pretty-select-item { padding: 3px 6px; font-size: 10px; line-height: 1.2; }
+
+/* Calendar */
+.calendar-header { gap: 6px; }
+.calendar-header h2 { font-size: 0.96rem; }
+.calendar-nav { gap: 4px; }
+.calendar-nav button { min-height: 22px; padding: 1px 6px; font-size: 10px; }
+.calendar-grid { gap: 4px; }
+.week-header { font-size: 10px; padding: 4px 0; }
+.calendar-cell { min-height: 64px; padding: 2px; }
+.calendar-cell strong { font-size: 10px; margin-bottom: 3px; }
+.calendar-items { gap: 2px; }
+.calendar-item { font-size: 9px; padding: 0 2px; line-height: 1.2; }
+
+/* Hide Finished controls */
+.panel-controls label,
+.todo-filter { gap: 4px; font-size: 10px; }
+.panel-controls label input[type='checkbox'],
+.todo-filter input[type='checkbox'] { width: 12px; height: 12px; min-height: 0; margin: 0; padding: 0; }
+
+/* Work detail panel compact */
+.work-detail-panel {
+  width: 34%;
+  min-width: 260px;
+  padding: 10px;
+  top: 8px;
+}
+
+.work-detail-header {
+  margin-bottom: 6px;
+  padding-bottom: 5px;
+}
+
+.work-detail-header h3,
+.work-detail-body-header h4,
+.work-detail-task h4 {
+  font-size: 11px;
+}
+
+.work-detail-header .btn-text {
+  padding: 2px 6px;
+  font-size: 10px;
+}
+
+.work-detail-meta {
+  gap: 5px;
+  padding: 7px;
+}
+
+.work-detail-field {
+  gap: 3px;
+}
+
+.work-detail-field span {
+  font-size: 10px;
+}
+
+.work-detail-body,
+.work-detail-task {
+  margin-top: 8px;
+  padding: 7px;
+}
+
+.work-detail-body-header {
+  margin-bottom: 6px;
+}
+
+.rich-output {
+  padding: 7px;
+  font-size: 11px;
+  line-height: 1.35;
+}
+
+.rich-toolbar {
+  gap: 3px;
+  margin-bottom: 5px;
+}
+
+.rich-toolbar button {
+  padding: 2px 5px;
+  font-size: 10px;
+}
+
+.rich-editor {
+  min-height: 110px;
+  padding: 6px;
+  font-size: 11px;
+}
+
+.detail-task-form {
+  grid-template-columns: 1fr 98px 48px;
+  gap: 4px;
+  margin: 5px 0 6px;
+}
+
+.detail-task-form .btn {
+  padding: 2px 0;
+  font-size: 10px;
+}
+
+.detail-task-list {
+  gap: 2px;
+}
+
+.work-detail-task .task-item {
+  gap: 4px;
+  padding: 3px 16px 3px 4px;
+  min-height: 18px;
+}
+
+.work-detail-task .task-item span {
+  font-size: 10px;
+  line-height: 1.15;
+}
+
+.work-detail-task .task-item input[type='checkbox'] {
+  width: 11px;
+  height: 11px;
+  min-height: 0;
+  margin: 0;
+  padding: 0;
+}
+
+.work-detail-task .btn-delete-card {
+  right: 4px;
+  bottom: 3px;
+  font-size: 10px;
+}
+
+@media (max-width: 960px) {
+  .work-detail-panel {
+    width: 100%;
+    min-width: 0;
+    position: static;
   }
 }
