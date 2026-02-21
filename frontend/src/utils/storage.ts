@@ -11,7 +11,6 @@ const emptyIndex: AppIndex = {
 };
 
 let selectedParentHandle: FileSystemDirectoryHandle | null = null;
-let selectedParentLabel = '';
 
 type TauriInvoke = <T = unknown>(cmd: string, args?: Record<string, unknown>) => Promise<T>;
 
@@ -31,6 +30,11 @@ async function invokeDesktop<T>(cmd: string, args?: Record<string, unknown>): Pr
     throw new Error('Desktop runtime is not available.');
   }
   return invoke<T>(cmd, args);
+}
+
+async function invokeDesktopOr<T>(fallback: T, cmd: string, args?: Record<string, unknown>): Promise<T> {
+  if (!isTauriDesktop()) return fallback;
+  return invokeDesktop<T>(cmd, args);
 }
 
 function cycleKey(cycleId: string): string {
@@ -112,9 +116,7 @@ async function readCycleFile(handle: FileSystemDirectoryHandle): Promise<CycleDa
 
 export async function pickFolder(): Promise<string | null> {
   if (isTauriDesktop()) {
-    const path = await invokeDesktop<string | null>('pick_folder');
-    selectedParentLabel = path ?? '';
-    return path;
+    return invokeDesktop<string | null>('pick_folder');
   }
 
   if (!supportsFsApi()) {
@@ -123,7 +125,6 @@ export async function pickFolder(): Promise<string | null> {
 
   const handle = await window.showDirectoryPicker();
   selectedParentHandle = handle;
-  selectedParentLabel = handle.name;
   return handle.name;
 }
 
@@ -144,30 +145,18 @@ export async function loadIndex(): Promise<AppIndex> {
 
 export async function selectCycle(cycleId: string): Promise<AppIndex> {
   if (isTauriDesktop()) {
-    const next = await invokeDesktop<AppIndex>('select_cycle', { cycleId });
-    const selected = next.cycles.find((cycle) => cycle.id === cycleId);
-    if (selected?.folderPath) {
-      selectedParentLabel = selected.folderPath;
-    }
-    return next;
+    return invokeDesktop<AppIndex>('select_cycle', { cycleId });
   }
 
   const index = await loadIndex();
-  const selected = index.cycles.find((cycle) => cycle.id === cycleId);
   const next = { ...index, selectedCycleId: cycleId };
   localStorage.setItem(INDEX_KEY, JSON.stringify(next));
-
-  if (selected?.folderPath) {
-    selectedParentLabel = selected.folderPath;
-  }
   return next;
 }
 
-export async function createCycle(name: string, _parentDir: string): Promise<AppIndex> {
+export async function createCycle(name: string, parentDir: string): Promise<AppIndex> {
   if (isTauriDesktop()) {
-    const next = await invokeDesktop<AppIndex>('create_cycle', { name, parentDir: _parentDir });
-    selectedParentLabel = _parentDir;
-    return next;
+    return invokeDesktop<AppIndex>('create_cycle', { name, parentDir });
   }
 
   if (!selectedParentHandle) {
@@ -207,11 +196,9 @@ export async function createCycle(name: string, _parentDir: string): Promise<App
   return next;
 }
 
-export async function importCycle(_folderPath: string): Promise<AppIndex> {
+export async function importCycle(folderPath: string): Promise<AppIndex> {
   if (isTauriDesktop()) {
-    const next = await invokeDesktop<AppIndex>('import_cycle', { folderPath: _folderPath });
-    selectedParentLabel = _folderPath;
-    return next;
+    return invokeDesktop<AppIndex>('import_cycle', { folderPath });
   }
 
   if (!supportsFsApi()) {
@@ -261,7 +248,6 @@ export async function importCycle(_folderPath: string): Promise<AppIndex> {
   };
 
   localStorage.setItem(INDEX_KEY, JSON.stringify(next));
-  selectedParentLabel = folder.name;
   return next;
 }
 
@@ -322,40 +308,63 @@ export async function saveCycleData(cycleId: string, data: CycleData): Promise<v
   localStorage.setItem(cycleKey(cycleId), JSON.stringify(data));
 }
 
-export function getSelectedFolderLabel(): string {
-  return selectedParentLabel;
-}
-
 export function isDesktopRuntime(): boolean {
   return isTauriDesktop();
 }
 
 export async function minimizeDesktopWindow(): Promise<void> {
-  if (!isTauriDesktop()) return;
-  await invokeDesktop<void>('window_minimize');
+  await invokeDesktopOr<void>(undefined, 'window_minimize');
 }
 
 export async function toggleMaximizeDesktopWindow(): Promise<void> {
-  if (!isTauriDesktop()) return;
-  await invokeDesktop<void>('window_toggle_maximize');
+  await invokeDesktopOr<void>(undefined, 'window_toggle_maximize');
 }
 
 export async function closeDesktopWindow(): Promise<void> {
-  if (!isTauriDesktop()) return;
-  await invokeDesktop<void>('window_close');
+  await invokeDesktopOr<void>(undefined, 'window_close');
 }
 
 export async function startDesktopWindowDragging(): Promise<void> {
-  if (!isTauriDesktop()) return;
-  await invokeDesktop<void>('window_start_dragging');
+  await invokeDesktopOr<void>(undefined, 'window_start_dragging');
 }
 
 export async function getDesktopAlwaysOnTopState(): Promise<boolean> {
-  if (!isTauriDesktop()) return false;
-  return invokeDesktop<boolean>('window_is_always_on_top');
+  return invokeDesktopOr<boolean>(false, 'window_is_always_on_top');
 }
 
 export async function toggleDesktopAlwaysOnTop(): Promise<boolean> {
-  if (!isTauriDesktop()) return false;
-  return invokeDesktop<boolean>('window_toggle_always_on_top');
+  return invokeDesktopOr<boolean>(false, 'window_toggle_always_on_top');
+}
+
+export async function getDesktopPostItModeState(): Promise<boolean> {
+  return invokeDesktopOr<boolean>(false, 'window_is_post_it_mode');
+}
+
+export async function toggleDesktopPostItMode(): Promise<boolean> {
+  return invokeDesktopOr<boolean>(false, 'window_toggle_post_it_mode');
+}
+
+export async function getDesktopCalendarModeState(): Promise<boolean> {
+  return invokeDesktopOr<boolean>(false, 'window_is_calendar_mode');
+}
+
+export async function toggleDesktopCalendarMode(): Promise<boolean> {
+  return invokeDesktopOr<boolean>(false, 'window_toggle_calendar_mode');
+}
+
+export async function getDesktopWindowOpacity(): Promise<number> {
+  return invokeDesktopOr<number>(1, 'window_get_opacity');
+}
+
+export async function setDesktopWindowOpacity(opacity: number): Promise<number> {
+  if (!isTauriDesktop()) return 1;
+  const next = Math.min(1, Math.max(0.5, opacity));
+
+  try {
+    await invokeDesktop<void>('plugin:window|set_opacity', { label: 'main', value: next });
+  } catch {
+    // Keep compatibility with runtimes where core window opacity command is unavailable.
+  }
+
+  return invokeDesktop<number>('window_set_opacity', { opacity: next });
 }

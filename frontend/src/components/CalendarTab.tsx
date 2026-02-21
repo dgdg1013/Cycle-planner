@@ -117,7 +117,7 @@ export function CalendarTab({
       const key = toDateKey(date);
       if (!key) return;
       itemsByDay[key] = itemsByDay[key] ?? [];
-      itemsByDay[key].push({ id: `${goal.id}-${suffix}`, date: key, label: `[Goal] ${goal.title} ${suffix}`, completed: status === 'DONE', kind: 'goal' });
+      itemsByDay[key].push({ id: `${goal.id}-${suffix}`, date: key, label: `[G] ${goal.title} ${suffix}`, completed: status === 'DONE', kind: 'goal' });
     });
   });
 
@@ -132,7 +132,7 @@ export function CalendarTab({
       itemsByDay[key].push({
         id: `${work.id}-${suffix}`,
         date: key,
-        label: `[Work] ${work.title} ${suffix}`,
+        label: `[W] ${work.title} ${suffix}`,
         completed: work.status === 'DONE',
         kind: 'work',
         workId: work.id
@@ -144,7 +144,7 @@ export function CalendarTab({
     const key = toDateKey(task.dueDate);
     if (!key) return;
     itemsByDay[key] = itemsByDay[key] ?? [];
-    itemsByDay[key].push({ id: task.id, date: key, label: `[Task] ${task.title} Due`, completed: task.done, kind: 'task' });
+    itemsByDay[key].push({ id: task.id, date: key, label: `[T] ${task.title} Due`, completed: task.done, kind: 'task' });
   });
 
   const dayCells: Array<number | null> = [];
